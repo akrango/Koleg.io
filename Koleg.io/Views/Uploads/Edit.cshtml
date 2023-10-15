@@ -1,0 +1,79 @@
+﻿@model Koleg.io.Models.Upload
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Upload</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        @Html.Hidden("FileExtension", Model.FileName.Split('.').Last(), new { id = "fileExtension" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FileName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.FileName, new { @class = "form-control", id = "fileName" })
+                @Html.ValidationMessageFor(model => model.FileName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Handle the blur event of the file name input
+            $('#fileName').on('blur', function () {
+                // Get the new file name
+                var newFileName = $(this).val();
+
+                // Find the last period (.) in the file name
+                var lastPeriodIndex = newFileName.lastIndexOf('.');
+
+                if (lastPeriodIndex >= 0) {
+                    // Extract the new file extension
+                    var newExtension = newFileName.substring(lastPeriodIndex + 1);
+
+                    // Get the original extension from the hidden field
+                    var originalExtension = $('#fileExtension').val();
+
+                    // If the new extension is different from the original extension, revert to the original extension
+                    if (newExtension !== originalExtension) {
+                        $(this).val(newFileName.substring(0, lastPeriodIndex) + '.' + originalExtension);
+                    }
+                }
+            });
+        });
+    </script>
+
+}

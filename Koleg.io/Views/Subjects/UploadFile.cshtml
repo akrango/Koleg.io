@@ -1,0 +1,45 @@
+﻿@model Koleg.io.Models.SubjectUploadViewModel
+
+@{
+    ViewBag.Title = "Upload File";
+}
+
+<h2>Upload File</h2>
+
+@*@using (Html.BeginForm("UploadFile", "Subjects", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+
+        @Html.HiddenFor(model=>model.SubjectId)
+        <div class="form-group">
+            @Html.LabelFor(model => model.Upload.Description)
+            @Html.TextAreaFor(model => model.Upload.Description, new { @class = "form-control", id = "description" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Upload.FileData)
+            <input type="file" name="file" id="file" class="form-control" />
+        </div>
+
+        <input type="submit" value="Upload" class="btn btn-primary" />
+    }*@
+
+@using (Html.BeginForm("UploadFile", "Subjects", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.SubjectId)
+
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea name="description" id="description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="file">File:</label>
+        <input type="file" name="file" id="file" class="form-control" />
+    </div>
+    <input type="submit" value="Upload" class="btn btn-primary" />
+}
+
+
+
+
+

@@ -1,0 +1,38 @@
+﻿@model List<Koleg.io.Models.Upload>
+
+@{
+    ViewBag.Title = "User Files";
+}
+
+<h2>User Files</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model)
+            {
+                <tr>
+                    <td>@file.FileName</td>
+                    <td>
+                        @Html.ActionLink("Download", "DownloadFile", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
+                        @Html.ActionLink("Comments", "Details", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
+                        @Html.ActionLink("Edit", "Edit", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
+                        @Html.ActionLink("Delete", "Delete", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
+                        <!-- Add additional actions if needed -->
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No files uploaded by the user.</p>
+}

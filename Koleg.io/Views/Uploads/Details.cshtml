@@ -1,0 +1,35 @@
+﻿@model Koleg.io.Models.Upload
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Upload</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FileName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FileName)
+        </dd>
+    </dl>
+</div>
+
+@foreach (var comment in Model.Comments)
+{
+    <p>
+        <strong>@comment.User.UserName:</strong> @comment.CommentText
+    </p>
+}
+
+<p>@Html.ActionLink("Add Comment", "AddComment", new { id = Model.Id }, new { @class = "btn btn-primary" })</p>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
