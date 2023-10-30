@@ -173,6 +173,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MyNotificationsController.cs" />
     <Compile Include="Controllers\SubjectsController.cs" />
+    <Compile Include="Controllers\UploadChunksController.cs" />
     <Compile Include="Controllers\UploadsController.cs" />
     <Compile Include="Extensions\ClaimsPrincipalExtension.cs" />
     <Compile Include="Global.asax.cs">
@@ -238,6 +239,10 @@
     <Compile Include="Migrations\202310190910529_AddClaim.designer.cs">
       <DependentUpon>202310190910529_AddClaim.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202310301455108_UploadChunk.cs" />
+    <Compile Include="Migrations\202310301455108_UploadChunk.designer.cs">
+      <DependentUpon>202310301455108_UploadChunk.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -247,6 +252,7 @@
     <Compile Include="Models\Subject.cs" />
     <Compile Include="Models\SubjectUploadViewModel.cs" />
     <Compile Include="Models\Upload.cs" />
+    <Compile Include="Models\UploadChunk.cs" />
     <Compile Include="Models\UploadDetailsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -520,6 +526,11 @@
     <Content Include="Views\Account\AddUserToRole.cshtml" />
     <Content Include="Views\Subjects\_CreateSubject.cshtml" />
     <Content Include="Views\Subjects\_CreateUpload.cshtml" />
+    <Content Include="Views\UploadChunks\Create.cshtml" />
+    <Content Include="Views\UploadChunks\Delete.cshtml" />
+    <Content Include="Views\UploadChunks\Details.cshtml" />
+    <Content Include="Views\UploadChunks\Edit.cshtml" />
+    <Content Include="Views\UploadChunks\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -595,6 +606,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202310190910529_AddClaim.resx">
       <DependentUpon>202310190910529_AddClaim.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310301455108_UploadChunk.resx">
+      <DependentUpon>202310301455108_UploadChunk.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -22,15 +22,17 @@ namespace Koleg.io.Controllers
             return View(db.Subjects.Include(s => s.Uploads).ToList());
         }
 
+
         public ActionResult UploadFile(int id)
         {
             SubjectUploadViewModel model=new SubjectUploadViewModel();
             model.SubjectId = id;
             model.Subject = db.Subjects.Find(id);
+           
             return PartialView("_CreateUpload",model);
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public ActionResult UploadFile(string description,HttpPostedFileBase file, SubjectUploadViewModel model)
         {
             if (file == null || file.ContentLength == 0)
@@ -73,7 +75,69 @@ namespace Koleg.io.Controllers
 
             // If the model state is not valid, return the view with validation errors
             return PartialView("_CreateUpload", model);
+        }*/
+
+        [HttpPost]
+        public ActionResult UploadFile(string description, HttpPostedFileBase file, SubjectUploadViewModel model)
+        {
+            if (file == null || file.ContentLength == 0)
+            {
+                // Handle the case where no file is selected for upload
+                ModelState.AddModelError("file", "Please select a file.");
+            }
+
+            if (string.IsNullOrEmpty(description))
+            {
+                // Handle the case where the description is empty
+                ModelState.AddModelError("description", "Please enter a description.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Get the currently logged-in user's ID (you may need to customize this based on your authentication setup)
+                string userId = User.Identity.GetUserId();
+                var subject = db.Subjects.Find(model.SubjectId);
+
+                using (BinaryReader binaryReader = new BinaryReader(file.InputStream))
+                {
+                    int bufferSize = 4096; // You can adjust the buffer size as needed
+                    byte[] buffer = new byte[bufferSize];
+                    int bytesRead;
+
+                    while ((bytesRead = binaryReader.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        // Process the current chunk of data and save it to the database
+                        var uploadedFileChunk = new UploadChunk
+                        {
+                            FileId = subject.Id, // Link the chunk to the corresponding file
+                            ChunkData = buffer,  // Store the chunk data
+                        };
+
+                        db.UploadChunks.Add(uploadedFileChunk);
+                        db.SaveChanges(); // Save the chunk to the database
+                    }
+                }
+
+                // Now that all chunks are saved, you can update the Upload entity with metadata and final processing.
+                var uploadedFile = new Upload
+                {
+                    FileName = file.FileName,
+                    UserId = userId,
+                    Description = description,
+                };
+
+                db.Uploads.Add(uploadedFile);
+                subject.Uploads.Add(uploadedFile);
+                uploadedFile.Subject = subject;
+                db.SaveChanges(); // Save the final file information to the database
+
+                return RedirectToAction("Details", new { id = subject.Id });
+            }
+
+            // If the model state is not valid, return the view with validation errors
+            return PartialView("_CreateUpload", model);
         }
+
 
         // GET: Subjects/Details/5
         public ActionResult Details(int? id)

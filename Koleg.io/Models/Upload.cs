@@ -21,9 +21,11 @@ namespace Koleg.io.Models
         public virtual Subject Subject { get; set; }
         public int SubjectId { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<UploadChunk> Chunks { get; set; }
         public bool IsCommentedOn { get; set; }
         public Upload() {
             Comments=new List<Comment>();
+            Chunks=new List<UploadChunk>();
             IsCommentedOn = false;
         }
     }

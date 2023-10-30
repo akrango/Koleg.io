@@ -110,7 +110,7 @@ namespace Koleg.io.Controllers
         }
 
 
-        public ActionResult DownloadFile(int id)
+       /* public ActionResult DownloadFile(int id)
         {
             // Retrieve the uploaded file from the database by its ID
             Upload uploadedFile = db.Uploads.FirstOrDefault(f => f.Id == id);
@@ -129,7 +129,9 @@ namespace Koleg.io.Controllers
                 // Handle the case where the file with the given ID was not found
                 return HttpNotFound();
             }
-        }
+        }*/
+
+
 
         // GET: Uploads/Details/5
         public ActionResult Details(int? id)
