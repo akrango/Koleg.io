@@ -83,4 +83,18 @@ namespace Koleg.io.Models
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
+
+    public class AddToRoleModel
+    {
+        public string SelectedEmail { get; set; }
+        public string SelectedRole { get; set; }
+        public List<string> Emails { get; set; }
+        public List<string> Roles { get; set; }
+
+        public AddToRoleModel()
+        {
+            Emails = new List<string>();
+            Roles = new List<string>();
+        }
+    }
 }

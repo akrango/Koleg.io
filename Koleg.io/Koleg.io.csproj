@@ -171,8 +171,10 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MyNotificationsController.cs" />
     <Compile Include="Controllers\SubjectsController.cs" />
     <Compile Include="Controllers\UploadsController.cs" />
+    <Compile Include="Extensions\ClaimsPrincipalExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -224,6 +226,18 @@
     <Compile Include="Migrations\202310102317324_Comments1.designer.cs">
       <DependentUpon>202310102317324_Comments1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202310152347343_MyUploads.cs" />
+    <Compile Include="Migrations\202310152347343_MyUploads.designer.cs">
+      <DependentUpon>202310152347343_MyUploads.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202310160018349_UploadNotidication.cs" />
+    <Compile Include="Migrations\202310160018349_UploadNotidication.designer.cs">
+      <DependentUpon>202310160018349_UploadNotidication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202310190910529_AddClaim.cs" />
+    <Compile Include="Migrations\202310190910529_AddClaim.designer.cs">
+      <DependentUpon>202310190910529_AddClaim.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -233,6 +247,7 @@
     <Compile Include="Models\Subject.cs" />
     <Compile Include="Models\SubjectUploadViewModel.cs" />
     <Compile Include="Models\Upload.cs" />
+    <Compile Include="Models\UploadDetailsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -360,9 +375,11 @@
     <Content Include="Content\DataTables\images\sort_desc.png" />
     <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\swf\flashExport.swf" />
+    <Content Include="Content\Theme.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="LoginPartial.css" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -373,7 +390,6 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\DataTables\css\mixins.scss" />
     <Content Include="Content\DataTables\css\common.scss" />
-    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\autoFill.foundation.js" />
@@ -438,11 +454,16 @@
     <Content Include="Scripts\DataTables\responsive.foundation.min.js" />
     <Content Include="Scripts\DataTables\responsive.jqueryui.js" />
     <Content Include="Scripts\DataTables\responsive.jqueryui.min.js" />
-    <Content Include="Scripts\jquery-3.4.1.js" />
-    <Content Include="Scripts\jquery-3.4.1.min.js" />
-    <Content Include="Scripts\jquery-3.4.1.slim.js" />
-    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -496,9 +517,13 @@
     <Content Include="Views\Uploads\UserFiles.cshtml" />
     <Content Include="Views\Subjects\UploadFile.cshtml" />
     <Content Include="Views\Uploads\AddComment.cshtml" />
+    <Content Include="Views\Account\AddUserToRole.cshtml" />
+    <Content Include="Views\Subjects\_CreateSubject.cshtml" />
+    <Content Include="Views\Subjects\_CreateUpload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\MyNotifications\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -524,8 +549,6 @@
     <Content Include="Scripts\bootstrap.esm.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
-    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202310082204016_UpdatingUser.resx">
@@ -563,6 +586,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202310102317324_Comments1.resx">
       <DependentUpon>202310102317324_Comments1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310152347343_MyUploads.resx">
+      <DependentUpon>202310152347343_MyUploads.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310160018349_UploadNotidication.resx">
+      <DependentUpon>202310160018349_UploadNotidication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310190910529_AddClaim.resx">
+      <DependentUpon>202310190910529_AddClaim.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

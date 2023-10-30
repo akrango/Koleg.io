@@ -4,29 +4,11 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>Uploads for @Model.Name</h2>
 
-<div>
-    <h4>Subject</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+<button id="addUploadButton" data-toggle="modal" data-target="#createUploadModal" class="btn btn-primary">Add New Upload</button>
+<div id="createUploadModal" tabindex="-1" class="modal fade" role="dialog">
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
 </div>
 
 <div>
@@ -50,3 +32,51 @@
     @Html.ActionLink("Back to List", "Index")
     @Html.ActionLink("Upload File", "UploadFile", new { id = Model.Id })
 </p>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Attach a click event handler to the card element
+            $(".card").click(function () {
+                // Get the id from the id attribute
+                var id = $(this).attr("id").split("_")[1];
+
+                // Redirect to the desired view using JavaScript
+                window.location.href = "/Uploads/Details/" + id; // Replace ControllerName and ActionName
+            });
+
+
+            // Show the modal when the "Add New Upload" button is clicked
+            $("#addUploadButton").on("click", function () {
+                $.ajax({
+                    url: '/Subjects/UploadFile/' + @Model.Id,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#createUploadModal').html(data);
+                        $('#createUploadModal').modal('show');
+                    },
+                    error: function () {
+                        alert('Error occurred while fetching data.');
+                    }
+                });
+            });
+
+            // Hide the modal when the form is submitted
+            $("#createUploadForm").on("submit", function (e) {
+                // Serialize the form data
+                var formData = new FormData($('#createUploadForm')[0]);
+                $.ajax({
+                    url: "/Subjects/UploadFile/" + @Model.Id,
+                    type: "POST",
+                    data: formData,
+                    processData: false, // Prevent jQuery from automatically processing the data
+                    contentType: false, // Prevent jQuery from setting the content type
+                    success: function () {
+                        $("#createUploadModal").modal("hide");
+                        // You may want to refresh or update the subject list on success.
+                    }
+                });
+            });
+    });
+    </script>
+}

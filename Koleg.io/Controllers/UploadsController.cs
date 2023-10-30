@@ -35,13 +35,16 @@ namespace Koleg.io.Controllers
         {
             if (ModelState.IsValid)
             {
-                comment.User = db.Users.Find(comment.UserId);
+                //comment.User = db.Users.Find(comment.UserId);
                 var upload =db.Uploads.Find(comment.UploadId);
                 // Create a new comment and associate it with the uploaded file
                 upload.Comments.Add(comment);
+                upload.IsCommentedOn = true;
+                var user= db.Users.Find(comment.UserId);
+                user.MyUploads.Add(upload);
                 db.SaveChanges();
 
-                return RedirectToAction("Index"); // Redirect to the appropriate view
+                return RedirectToAction("Details", new {id=upload.Id}); // Redirect to the appropriate view
             }
 
             return View(comment);
@@ -94,6 +97,8 @@ namespace Koleg.io.Controllers
 
                     // Add the uploaded file to the database
                     db.Uploads.Add(uploadedFile);
+                    var user=db.Users.FirstOrDefault(u=>u.Id == userId);
+                    user.MyUploads.Add(uploadedFile);
                     db.SaveChanges();
                 }
 
@@ -138,7 +143,16 @@ namespace Koleg.io.Controllers
             {
                 return HttpNotFound();
             }
-            return View(upload);
+            UploadDetailsViewModel viewModel = new UploadDetailsViewModel();
+            viewModel.Upload = upload;
+            Comment comment=new Comment();
+            var userId= User.Identity.GetUserId();
+            comment.User = db.Users.FirstOrDefault(u => u.Id == userId);
+            comment.UploadId = upload.Id;
+            comment.UserId = userId;
+            viewModel.Comment = comment;
+            
+            return View(viewModel);
         }
 
         // GET: Uploads/Create

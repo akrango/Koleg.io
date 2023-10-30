@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Koleg.io.Models;
 using System.Web.Security;
+using System.Collections.Generic;
 
 namespace Koleg.io.Controllers
 {
@@ -152,10 +153,11 @@ namespace Koleg.io.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.FirstName, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, Index = model.Index };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, Index = model.Index };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    //await _userManager.AddClaimAsync(user.Id, new Claim("FirstName", user.FirstName));
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -481,5 +483,28 @@ namespace Koleg.io.Controllers
             }
         }
         #endregion
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult AddUserToRole()
+        {
+            AddToRoleModel model = new AddToRoleModel();
+            model.Emails = UserManager.Users.Select(u => u.Email).ToList();
+            model.Roles = new List<string>() { "Administrator", "User" };
+            return View(model);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        public ActionResult AddUserToRole(AddToRoleModel model)
+        {
+            var email = model.SelectedEmail;
+            var user = UserManager.FindByEmail(email);
+            if (user == null)
+            {
+                throw new HttpException(404, "No user with email: " + email);
+            }
+            UserManager.AddToRole(user.Id, model.SelectedRole);
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

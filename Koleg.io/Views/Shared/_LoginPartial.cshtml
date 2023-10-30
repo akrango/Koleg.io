@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNet.Identity
+@using Koleg.io.Extensions
+
 @if (Request.IsAuthenticated)
 {
 
@@ -9,8 +11,17 @@
             <li>
                 @Html.ActionLink("My Uploads", "UserFiles", "Uploads", new { area = "" }, new { @class = "nav-link" })
             </li>
+            @if (User.IsInRole("User"))
+            {
+                <li>
+                    <div id="notification-bar" class="alert alert-info">
+                        <span id="notification-count">0</span>
+                    </div>
+                </li>
+            }
+
             <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+                @Html.ActionLink("Hello " + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
             </li>
             <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
@@ -23,3 +34,33 @@ else
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
     </ul>
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+        // Function to update the notification count
+        function updateNotificationCount() {
+            var notificationCount;
+
+            // Use Razor to inject the notification count from the model
+            $.ajax({
+                url: '/MyNotifications/GetNotificationCount', // Replace with your controller and action names
+                method: 'GET',
+                success: function (count) {
+                    // 'data' contains the integer value returned from the controller
+                    notificationCount = count;
+                },
+                error: function (error) {
+                    console.error('Error: ' + error.responseText);
+                }
+            });
+            $('#notification-count').text(notificationCount);
+        }
+        // Initially, update the notification count
+        updateNotificationCount();
+
+        // Periodically update the notification count, for example, every 30 seconds
+        //setInterval(updateNotificationCount, 3000);
+    </script>
+}
+

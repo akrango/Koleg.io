@@ -27,7 +27,7 @@ namespace Koleg.io.Controllers
             SubjectUploadViewModel model=new SubjectUploadViewModel();
             model.SubjectId = id;
             model.Subject = db.Subjects.Find(id);
-            return View(model);
+            return PartialView("_CreateUpload",model);
         }
 
         [HttpPost]
@@ -68,11 +68,11 @@ namespace Koleg.io.Controllers
                     db.SaveChanges();
                 }
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Details",new {id=subject.Id});
             }
 
             // If the model state is not valid, return the view with validation errors
-            return View();
+            return PartialView("_CreateUpload", model);
         }
 
         // GET: Subjects/Details/5
@@ -93,7 +93,8 @@ namespace Koleg.io.Controllers
         // GET: Subjects/Create
         public ActionResult Create()
         {
-            return View();
+            return PartialView("_CreateSubject");
+
         }
 
         // POST: Subjects/Create
@@ -107,10 +108,9 @@ namespace Koleg.io.Controllers
             {
                 db.Subjects.Add(subject);
                 db.SaveChanges();
-                return RedirectToAction("Index");
             }
 
-            return View(subject);
+            return RedirectToAction("Index");
         }
 
         // GET: Subjects/Edit/5

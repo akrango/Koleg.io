@@ -67,7 +67,7 @@ namespace Koleg.io.Models
     {
         [Required]
         [EmailAddress]
-        [RegularExpression(@"^[A-Za-z0-9._%+-]+@students\.finki\.ukim\.mk$", ErrorMessage = "Email must be in the format example@students.finki.ukim.mk")]
+        //[RegularExpression(@"^[A-Za-z0-9._%+-]+@students\.finki\.ukim\.mk$", ErrorMessage = "Email must be in the format example@students.finki.ukim.mk")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
