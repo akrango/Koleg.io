@@ -63,6 +63,13 @@
                     <i class="bi bi-search" style="font-size:1.2em"></i>
                 </h6>
                 <input type="text" id="searchInput" class="form-control" />
+
+                <label for="semesterDropdown">Select Semester:</label>
+                <select id="semesterDropdown" class="form-control">
+                    <option value="">All Semesters</option>
+                    <option value="Winter">Winter</option>
+                    <option value="Summer">Summer</option>
+                </select>
             </div>
         </div>
     </div>
@@ -111,28 +118,21 @@ else
 @section Scripts {
 
     <script>
+       
         $(document).ready(function () {
 
-            $("#searchInput").on("input", function () {
-                // Get the search term from the input
-                var searchTerm = $(this).val();
-
-                // Perform an AJAX request to the server to get search results
-                $.ajax({
-                    url: "/Subjects/Search",
-                    method: "POST",
-                    data: { searchTerm: searchTerm },
-                    success: function (data) {
-/*                        $(".allSubjects").empty();
-*/                        // Update the subjects container with the received data
-                        $(".allSubjects").html(data);
-/*                        $("#searchResultsContainer").html(data);
-*/                    },
-                    error: function () {
-                        alert('Error occurred while fetching search results.');
-                    }
-                });
+            $("#semesterDropdown").on("change", function () {
+                // Trigger the search when the semester dropdown changes
+                performSearch();
             });
+
+            $("#searchInput").on("input", function () {
+                // Trigger the search when the search input changes
+                performSearch();
+            });
+
+            
+
             // Delete action
             $(".js-delete").on("click", function () {
                 var button = $(this);
@@ -165,8 +165,6 @@ else
                 });
 
             });
-
-            
 
             // Card click action
             $(".card").on("click", function (event) {
@@ -260,7 +258,28 @@ else
                 });
             });
         });
+        function performSearch() {
+            var searchTerm = $("#searchInput").val();
+            var semester = $("#semesterDropdown").val();
 
+            $.ajax({
+                url: "/Subjects/Search",
+                method: "POST",
+                data: { searchTerm: searchTerm, semester: semester },
+                success: function (data) {
+                    $(".allSubjects").html(data);
+                    $(".allSubjects").on("click", ".card", function (event) {
+                        if (!$(event.target).hasClass("js-delete") && !$(event.target).hasClass("edit")) {
+                            var id = $(this).attr("id").split("_")[1];
+                            window.location.href = "/Subjects/Details/" + id;
+                        }
+                    });
+                },
+                error: function () {
+                    alert('Error occurred while fetching search results.');
+                }
+            });
+        }
 
     </script>
 }

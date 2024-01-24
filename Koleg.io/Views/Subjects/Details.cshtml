@@ -97,7 +97,7 @@
             <h2>Sorry, no Kolega uploaded a file :(</h2>
             <h4>
                 @*        <span style="font-size:15em">😵</span>
-                *@        Maybe you can be a good Kolega and upload some files
+                *@        Maybe you can upload some files ->
             </h4>
         }
         @foreach (var upload in Model.Uploads)
@@ -134,14 +134,18 @@
         <h4>Subject Overall Score:</h4>
         <h5>
             <i class="bi bi-star-fill" style="color:gold"></i>
-            @*@Math.Round((double)ViewBag.OverallScore, 1)*@
+            @Math.Round((double)ViewBag.OverallScore, 1)
         </h5>
         <h4>Total Number of Files:</h4>
         <h5><i class="bi bi-arrow-90deg-up" style="color:red"></i>@ViewBag.TotalNumberOfFiles</h5>
         @if (@ViewBag.MostActiveUser != null)
         {
             <h4>Most Active User: </h4>
-            @ViewBag.MostActiveUser.UserName
+            <h5>
+                @ViewBag.MostActiveUser.FirstName @ViewBag.MostActiveUser.LastName
+                <br />
+                <i class="bi bi-arrow-90deg-up" style="color:red"></i><i>@ViewBag.MostActiveUser.UserName</i>
+            </h5>
 
         }
         <h4>Number of Uploads by Most Active User: </h4>

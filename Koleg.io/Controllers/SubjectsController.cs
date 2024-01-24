@@ -24,15 +24,29 @@ namespace Koleg.io.Controllers
         }
 
         [HttpPost]
-        public ActionResult Search(string searchTerm)
+        public ActionResult Search(string searchTerm, string semester)
         {
-            // Perform a search in your database based on the searchTerm
-            var subjects = db.Subjects
-                .Where(s => s.Name.Contains(searchTerm) || s.Semester.Contains(searchTerm))
-                .ToList();
+            var query = db.Subjects.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(semester))
+            {
+                query = query.Where(s => s.Name.Contains(searchTerm) && s.Semester == (semester));
+            }
+            else if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(s => s.Name.Contains(searchTerm));
+            }
+
+            else if (!string.IsNullOrEmpty(semester))
+            {
+                query = query.Where(s => s.Semester == semester);
+            }
+
+            var subjects = query.ToList();
 
             return PartialView("_SearchResults", subjects);
         }
+
 
         public ActionResult DownloadFile(int id)
         {
@@ -109,9 +123,8 @@ namespace Koleg.io.Controllers
                     return HttpNotFound();
                 }
                 return View("Details", subject);
-                /*return View("Details", new { id = subject.Id });*/
-/*                return RedirectToAction("ShowReviewModal");
-*/            }
+                
+            }
 
             // If the model state is not valid, return the view with validation errors
             return PartialView("_CreateUpload", model);
@@ -179,8 +192,8 @@ namespace Koleg.io.Controllers
         }
         public List<string> Semesters = new List<string>()
         {
-            "Зимски",
-            "Летен"
+            "Winter",
+            "Summer"
         };
         // GET: Subjects/Create
         public ActionResult Create()
