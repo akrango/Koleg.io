@@ -1,52 +1,109 @@
 ﻿@model IEnumerable<Koleg.io.Models.Subject>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Subjects";
 }
 
-<h2>Index</h2>
+<head>
+    <link href="~/Content/css/IndexStyle.css" rel="stylesheet" />
+</head>
+<h2>
+    @{
+        var title = "";
+        var title1 = "";
+        switch (ViewBag.Id)
+        {
+            case 1:
+                title = "First";
+                break;
+            case 2:
+                title = "Second";
+                break;
+            case 3:
+                title = "Third";
+                break;
+            case 4:
+                title = "Fourth";
+                break;
+            case 0:
+                title = "All";
+                break;
+        }
+        title1 = title;
+        title += " year subjects";
+    }
+    @title
+    @if (User.IsInRole("Administrator"))
+    {
+        <button id="addSubjectButton" data-toggle="modal" data-target="#createSubjectModal" class="btn btn-info">Add New Subject</button>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+    }
 
-<button id="addSubjectButton" data-toggle="modal" data-target="#createSubjectModal" class="btn btn-primary">Add New Subject</button>
+</h2>
+<style>
+</style>
+
+
 <div id="createSubjectModal" tabindex="-1" class="modal fade" role="dialog">
-   
+
 </div>
 
-<table class="table table-bordered" id="subjectsTable">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Name)</th>
+<div id="editSubjectModal" tabindex="-1" class="modal fade" role="dialog">
+    <!-- Content for the "Edit Subject" modal goes here -->
+</div>
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<br />
+@if (Model.Where(i => i.Year == ViewBag.Id).Count() > 0 || ViewBag.Id == 0)
+{
+    <div class="row filtered">
+        <div class="col-md-12">
+            <div class="form-group">
+                <h6>
+                    <label for="searchInput">Search Subjects</label>
+                    <i class="bi bi-search" style="font-size:1.2em"></i>
+                </h6>
+                <input type="text" id="searchInput" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <hr />
+}
+else
+{
+    <h4 style="color: #aec6cf ">Sorry, no Subjects for @title1 year</h4>
+}
+
+
+<!-- Add an empty div to hold the search results -->
+<div class="" id="searchResultsContainer"></div>
+
+<div class="row allSubjects">
+    @foreach (var item in Model)
+    {
+        if (item.Year == ViewBag.Id || ViewBag.Id == 0)
         {
-            <tr>
-                <td>
-                    <div class="card col-md-4 mb-4" id="fileCard_@item.Id">
-                        <div class="card-body">
-                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                            <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
-                            <div class="text-center">
-                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary btn-sm" })
-                                @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-secondary btn-sm" })
-                                @if (User.IsInRole("Administrator"))
-                                {
-                                    <button data-table-id="@item.Id" class="btn btn-danger js-delete">Delete</button>
-                                }
-                            </div>
+            <div class="col-md-2 mb-2">
+                <div class="card my-card" id="fileCard_@item.Id">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">
+                            <i class="bi bi-backpack" style="font-size: 1.5em;"></i>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </h3>
+                        <h6 class="card-text text-center">@Html.DisplayFor(modelItem => item.Semester)</h6>
+                        <div class="text-center">
+                            <button data-edit-id="@item.Id" class="btn btn-info edit">Edit</button>
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <button data-table-id="@item.Id" class="btn btn-danger js-delete">Delete</button>
+                            }
                         </div>
                     </div>
-                </td>
-
-            </tr>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    }
+</div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
@@ -55,33 +112,71 @@
 
     <script>
         $(document).ready(function () {
-            $("#subjectsTable").DataTable();
-            var table = $("#subjectsTable").DataTable();
 
-            // Delete action
-            $("#subjectsTable .js-delete").on("click", function () {
-                console.log("delete");
-                var button = $(this);
-                bootbox.confirm("Are you sure you want to delete this subject?", function (result) {
-                    if (result) {
-                        $.ajax({
-                            url: "/Subjects/Delete/" + button.attr("data-table-id"),
-                            method: "GET",
-                            success: function () {
-                                table.row(button.parents("tr")).remove().draw();
-                            }
-                        });
+            $("#searchInput").on("input", function () {
+                // Get the search term from the input
+                var searchTerm = $(this).val();
+
+                // Perform an AJAX request to the server to get search results
+                $.ajax({
+                    url: "/Subjects/Search",
+                    method: "POST",
+                    data: { searchTerm: searchTerm },
+                    success: function (data) {
+/*                        $(".allSubjects").empty();
+*/                        // Update the subjects container with the received data
+                        $(".allSubjects").html(data);
+/*                        $("#searchResultsContainer").html(data);
+*/                    },
+                    error: function () {
+                        alert('Error occurred while fetching search results.');
                     }
                 });
             });
+            // Delete action
+            $(".js-delete").on("click", function () {
+                var button = $(this);
+                console.log(button.attr("data-table-id"));
+
+                bootbox.confirm({
+                    message: "Are you sure you want to delete this subject?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/Subjects/Delete/" + button.attr("data-table-id"),
+                                method: "GET",
+                                success: function () {
+                                    button.closest('.card').remove();
+                                }
+                            });
+                        }
+                    },
+                    closeButton: false  
+                });
+
+            });
+
+            
 
             // Card click action
             $(".card").on("click", function (event) {
-                if (!$(event.target).hasClass("js-delete")) {
+                if (!$(event.target).hasClass("js-delete") && !$(event.target).hasClass("edit")) {
                     var id = $(this).attr("id").split("_")[1];
                     window.location.href = "/Subjects/Details/" + id;
                 }
             });
+
+
 
             // Show the modal when the "Add New Subject" button is clicked
             $("#addSubjectButton").on("click", function () {
@@ -102,15 +197,70 @@
             $("#createSubjectForm").on("submit", function (e) {
                 e.preventDefault(); // Prevent the default form submission
                 $.ajax({
-                    url: "/Subjects/Create", // Adjust the URL as needed
+                    url: "/Subjects/Create",
+                    method: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        // If the response is a partial view (indicating validation errors),
+                        // update the modal content and show the modal again
+                        if ($(data).find(".modal-content").length) {
+                            $('#createSubjectModal').html(data);
+                            $('#createSubjectModal').modal('show');
+                        } else {
+                            // If the response is not a partial view, the form submission was successful.
+                            // You may want to handle this case accordingly.
+                            // For example, you could close the modal or redirect to another page.
+                            $('#createSubjectModal').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while uploading the subject.');
+                    }
+                });
+            });
+
+            $(".edit").on("click", function () {
+                /* var id = $(this).data("table_id");
+                 button.attr("data-table-id")*/
+                /*var id = $(this).data("data_edit_id");*/
+                /* var elem = $('#EditButton');
+                 var id = elem.attr('data_edit_id');*/
+                var button = $(this);
+                console.log(button);
+                $.ajax({
+                    url: '/Subjects/Edit/' + button.attr("data-edit-id"),
+                    type: 'GET',
+                    success: function (data) {
+                        $('#editSubjectModal').html(data);
+                        $('#editSubjectModal').modal('show');
+                    },
+                    error: function () {
+                        console.log(id);
+                        alert('Error occurred while fetching data.');
+                    }
+                });
+            });
+
+            // Hide the edit modal when the form is submitted
+            $("#editSubjectForm").on("submit", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "/Subjects/Edit", // Adjust the URL as needed
                     method: "POST",
                     data: $(this).serialize(),
                     success: function () {
-                        $("#createSubjectModal").modal("hide");
+                        $("#editSubjectModal").modal("hide");
                         // You may want to refresh or update the subject list on success.
+                    },
+                    error: function () {
+                        alert('Error occurred while updating the subject.');
                     }
                 });
             });
         });
+
+
     </script>
 }

@@ -3434,7 +3434,7 @@ textarea.form-control-lg {
     opacity: var(--bs-btn-disabled-opacity);
 }
 
-.btn-primary {
+.btn-info {
     --bs-btn-color: #fff;
     --bs-btn-bg: #78c2ad;
     --bs-btn-border-color: #78c2ad;
@@ -13855,4 +13855,12 @@ legend {
 .list-group-item h6,
 .list-group-item .h6 {
     color: inherit;
+}
+
+h2, .h2 {
+    color: #007bff;
+}
+
+h4{
+    color: rgb(120, 194, 173);
 }

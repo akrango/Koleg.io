@@ -1,0 +1,167 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+h2 {
+    color: #007bff;
+}
+
+hr {
+    border-top: 2px solid #007bff;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    margin-top:20px;
+}
+
+.details-section {
+    width: 40%;
+    max-width: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 2px 2px 10px #888888;
+    margin-right: 20px; 
+    min-height:100%;
+}
+
+.star-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.star {
+    color: gray;
+    font-size: 24px;
+}
+
+.filled {
+    color: #ffd700;
+}
+
+.star.filled {
+    color: gold;
+}
+
+.star.filled-half {
+    position: relative;
+}
+
+    .star.filled-half::before {
+        content: '\2605';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        color: gold;
+        overflow: hidden;
+    }
+
+#rating {
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+.js-review {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.reviews {
+    flex-grow: 1;
+    max-height: 400px; /* Set maximum height for scrollable area */
+    overflow-y: auto;
+    width: 60%;
+    height:1000px;
+}
+
+.userReview {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+    .userReview h5 {
+        color: #007bff;
+    }
+
+.userStar {
+    color: gray;
+    font-size: 16px;
+}
+
+    .userStar.filled {
+        color: gold;
+    }
+
+.comment-form-wrapper {
+    padding: 20px;
+    width: 45%;
+    max-width: 400px;
+    margin-top: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px #888888;
+}
+
+.comment-form {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-top: 20px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    height: 60px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+p {
+    margin-top: 20px;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.right {
+    width: 45%;
+}
+hr{
+    margin:5px;
+}

@@ -1,0 +1,28 @@
+﻿@model List<Koleg.io.Models.Subject>
+
+<head>
+    <link href="~/Content/css/IndexStyle.css" rel="stylesheet" />
+</head>
+
+    @foreach (var subject in Model)
+    {
+        <div class="col-md-2 mb-2">
+            <div class="card my-card"  id="fileCard_@subject.Id">
+                <div class="card-body">
+                    <h3 class="card-title text-center">
+                        <i class="bi bi-backpack" style="font-size: 1.5em;"></i>
+                        @Html.DisplayFor(modelItem => subject.Name)
+                    </h3>   
+                    <h5 class="card-text text-center">@Html.DisplayFor(modelItem => subject.Semester)</h5>
+                    <div class="text-center">
+                        <button data-edit-id="@subject.Id" class="btn btn-info edit">Edit</button>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <button data-table-id="@subject.Id" class="btn btn-danger js-delete">Delete</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+

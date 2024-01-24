@@ -1,38 +1,153 @@
 ﻿@model List<Koleg.io.Models.Upload>
 
 @{
-    ViewBag.Title = "User Files";
+    ViewBag.Title = "Your Uploads";
 }
+<style>
+    .btn-container {
+        display: flex;
+        gap: 10px; /* Adjust the gap between buttons as needed */
+        justify-content:center;
+    }
 
-<h2>User Files</h2>
+    .btn-common-size {
+        width: 100px; /* Adjust the width as needed */
+        height: 30px; /* Adjust the height as needed */
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Optional: horizontally center the content */
+        font-size: 14px; /* Adjust the font size as needed */
+    }
+ 
 
-@if (Model != null && Model.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>File Name</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var file in Model)
-            {
+    /* Add these styles for centering */
+    .table-container {
+        display: flex;
+        justify-content: center;
+        
+    }
+    td{
+        text-align:center;
+    }
+</style>
+
+<div class="table-container">
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-hover" id="uploadsTable">
+            <thead class="text-center">
                 <tr>
-                    <td>@file.FileName</td>
-                    <td>
-                        @Html.ActionLink("Download", "DownloadFile", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
-                        @Html.ActionLink("Comments", "Details", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
-                        @Html.ActionLink("Edit", "Edit", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
-                        @Html.ActionLink("Delete", "Delete", new { id = file.Id }, new { @class = "btn btn-primary btn-sm" })
-                        <!-- Add additional actions if needed -->
-                    </td>
+                    <th><h4>File Name</h4></th>
+                    <th><h4>Actions</h4></th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No files uploaded by the user.</p>
+            </thead>
+            <tbody>
+                @foreach (var file in Model)
+                {
+                    <tr>
+                        <td>
+                                <h5>
+                                    @file.FileName
+                                </h5>
+                        </td>
+
+                        <td class="btn-container">
+                            <div class="btn-group">
+                                @Html.ActionLink("Download", "DownloadFile", new { id = file.Id }, new { @class = "btn btn-info btn-sm btn-common-size" })
+                                @if (file.IsApproved)
+                                {
+                                    @Html.ActionLink("Details", "Details", new { id = file.Id }, new { @class = "btn btn-info btn-sm btn-common-size" })
+                                }
+                                @if (!file.IsApproved)
+                                {
+                                    <button class="btn btn-light btn-common-size">Not Approved </button>
+                                }
+
+                                <button data-edit-id="@file.Id" class="btn btn-info btn-common-size edit">Edit</button>
+                                <button data-table-id="@file.Id" class="btn btn-danger btn-common-size js-delete">Delete</button>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No files uploaded by the user.</p>
+    }
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            // Delete action
+            $(".js-delete").on("click", function () {
+                console.log("delete");
+                var button = $(this);
+                bootbox.confirm({
+                    message: "Are you sure you want to delete this upload?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/Uploads/Delete/" + button.attr("data-table-id"),
+                                method: "GET",
+                                success: function () {
+                                    button.closest('tr').remove();
+                                }
+                            });
+                        }
+                    },
+                    closeButton: false  // Set closeButton option to false to hide the close (X) button
+                });
+            });
+
+            $(".edit").on("click", function () {
+                var button = $(this);
+                console.log(button);
+                $.ajax({
+                    url: '/Uploads/Edit/' + button.attr("data-edit-id"),
+                    type: 'GET',
+                    success: function (data) {
+                        $('#editSubjectModal').html(data);
+                        $('#editSubjectModal').modal('show');
+                    },
+                    error: function () {
+                        alert('Error occurred while fetching data.');
+                    }
+                });
+            });
+
+            // Hide the edit modal when the form is submitted
+            $("#editSubjectForm").on("submit", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "/Uploads/Edit", // Adjust the URL as needed
+                    method: "POST",
+                    data: $(this).serialize(),
+                    success: function () {
+                        $("#editSubjectModal").modal("hide");
+                        // You may want to refresh or update the subject list on success.
+                    },
+                    error: function () {
+                        alert('Error occurred while updating the subject.');
+                    }
+                });
+            });
+        });
+    </script>
+
 }

@@ -1,0 +1,73 @@
+﻿/* Subjects.css */
+
+/* Add pastel colors to the cards */
+.card {
+    background-color: #d5e3e8; /* Pastel Pink */
+    /*background-color: #aec6cf;*/ /* Pastel Pink */
+    border: 2px solid transparent;
+    color: black; /* Border color same as background color */
+}
+
+
+.btn-danger {
+    background-color: #f08080; /* Pastel Coral */
+    border-color: #f08080; /* Border color same as background color */
+    color: #fff; /* Text color */
+}
+
+/* Adjust the layout of the cards */
+.card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin:0;
+}
+
+.card-text {
+    flex-grow: 1;
+}
+
+/* Center the buttons */
+.text-center {
+    text-align: center;
+}
+
+/* Add margin to the Edit button for better spacing */
+.btn-info.edit {
+}
+/* Subjects.css */
+
+/* Subjects.css */
+
+/* Add pastel colors to the cards */
+.my-card {
+    background-color: #d5e3e8; /* Pastel Pink */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease-in-out;
+    height: 210px; /* Adjust the height as needed */
+    width: 210px; /* Adjust the width as needed */
+}
+
+    .my-card:hover {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .my-card h4 {
+        margin-bottom: 10px;
+        text-transform: capitalize;
+        font-size: 1em; /* Adjust the font size as needed */
+    }
+
+    .my-card .text-center {
+        margin-top: 5px;
+    }
+
+    .my-card .btn {
+        margin-right: 5px;
+    }

@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "User Profile";
+}
+<style>
+    .circular-image-container {
+        width: 300px; /* Adjust the size as needed */
+        height: 300px; /* Adjust the size as needed */
+        overflow: hidden;
+        border-radius: 20%;
+        margin: 30px auto; /* Center the container */
+        transition: transform 0.3s ease-in-out; /* Add a smooth transition effect */
+    }
+
+
+        .circular-image-container:hover {
+            transform: scale(1.2); /* Increase the size by 20% on hover */
+        }
+
+
+    .circular-image {
+        width: 100%;
+    }
+
+
+    .profile-info {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 1.2em;
+    }
+
+    .user-info-container {
+        padding: 20px;
+        border: 1px solid #ddd; /* Add a border for separation */
+        border-radius: 10px;
+        background-color: #f9f9f9; /* Add a light background color */
+        margin-top: 40px;
+        background-color: #d5e3e8;
+        text-align: center; /* Align user info text to the left */
+    }
+
+        .user-info-container dt {
+            font-weight: bold;
+            color: #333; /* Dark text color */
+            margin: 5px 0;
+        }
+
+        .user-info-container dd {
+            margin: 5px 0;
+            color: #666; /* Lighter text color */
+        }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="profile-info">
+                <h1 class="text-primary">Welcome, @ViewBag.ActiveUser.FirstName @ViewBag.ActiveUser.LastName!</h1>
+
+                @if (ViewBag.ActiveUser.ProfilePicturePath != null)
+                {
+                    <div class="circular-image-container">
+                        <img src="@ViewBag.ActiveUser.ProfilePicturePath" class="circular-image" />
+                    </div>
+                }
+                else
+                {
+                    <div class="circular-image-container">
+                        <img src="~/Pictures/profile.png" class="circular-image" />
+                    </div>
+                    <div class="flex-column">
+                        @using (Html.BeginForm("UploadProfilePicture", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="form-group">
+                                <label for="file">Choose profile picture</label>
+                                <input type="file" name="file" id="file" class="form-control" style="margin-left:180px"/>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-info form-control">Upload</button>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="user-info-container bg-gradient">
+                <i class="bi bi-person-vcard text-primary" style="font-size:5em"></i>
+                <dl class="dl-horizontal">
+                    <dt><h4>Username:</h4></dt>
+                    <dd><h5>@ViewBag.ActiveUser.UserName</h5></dd>
+
+                    <dt><h4>First Name:</h4></dt>
+                    <dd><h5>@ViewBag.ActiveUser.FirstName</h5></dd>
+
+                    <dt><h4>Last Name:</h4></dt>
+                    <dd><h5>@ViewBag.ActiveUser.LastName</h5></dd>
+
+                    <dt><h4>Index:</h4></dt>
+                    <dd><h5>@ViewBag.ActiveUser.Index</h5></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

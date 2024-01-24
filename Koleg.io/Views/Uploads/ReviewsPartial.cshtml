@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Koleg.io.Models.Review>
+
+
+<h3>Reviews (@Model.Count())</h3>
+<hr />
+@foreach (var review in Model)
+{
+    <div class="userReview">
+        @if (review.User.ProfilePicturePath != null)
+        {
+        <h5>
+            <img src="@review.User.ProfilePicturePath" class="circular-image" />
+
+            @review.User.FirstName @review.User.LastName
+
+        </h5>
+
+        }
+        else
+        {
+        <h5>
+            <img src="~/Pictures/profile.png" class="circular-image" />
+
+            @review.User.FirstName @review.User.LastName
+
+        </h5>
+
+        }
+        @for (var i = 1; i <= 5; i++)
+        {
+            <span class="userStar @(i <= review.Rating ? "filled" : "")">&#9733;</span>
+        }
+        @review.DateCreated.ToString("dd/MM/yyyy")
+        <p>@review.CommentText</p>
+    </div>
+}

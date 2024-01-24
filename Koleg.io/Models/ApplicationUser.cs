@@ -12,6 +12,8 @@ namespace Koleg.io.Models
         public string LastName { get; set; }
         public string Index { get; set; }
         public List<Upload> MyUploads { get; set; }
+        public string ProfilePicturePath { get; set; }
+
         public ApplicationUser() {
             MyUploads = new List<Upload>();
         }

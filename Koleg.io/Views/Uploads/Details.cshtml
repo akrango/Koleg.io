@@ -1,109 +1,303 @@
-﻿@model Koleg.io.Models.UploadDetailsViewModel
+﻿@model Koleg.io.Models.Upload
 
 @{
     ViewBag.Title = "Details";
 }
-
+<link href="~/Content/css/mystyle.css" rel="stylesheet" />
 @section Styles {
     <style>
-        /* Style the comments container with a narrower width */
-        .comments-wrapper {
-            max-width: 300px; /* Set the maximum width for the comment section */
-            max-height: 300px; /* Set the maximum height for the scrollable area */
-            overflow-y: auto; /* Enable vertical scrolling when content overflows */
-            border: 2px solid #007bff; /* Set a border with a nice blue color */
-            padding: 10px; /* Add padding for spacing */
-            border-radius: 10px; /* Round the corners */
-            box-shadow: 2px 2px 5px #888888; /* Add a subtle box shadow */
+        .detail-item {
+            margin-bottom: 15px;
         }
 
-        /* Style individual comments */
-        .comment {
-            margin-bottom: 10px; /* Add spacing between comments */
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            border-radius: 5px; /* Round the corners */
-            box-shadow: 2px 2px 5px #888888;
+        dl.dl-horizontal {
+            display: flex;
+            flex-direction:column;
+            flex-wrap: wrap;
         }
 
-            /* Style the user's name in each comment */
-            .comment strong {
-                color: #007bff; /* Set the name color to match the border */
+            dl.dl-horizontal dt {
+                width: 100px; /* Adjust the width as needed */
+                font-weight: bold;
             }
 
-            /* Style the comment text */
-            .comment p {
-                margin: 0; /* Remove default paragraph margin */
+            dl.dl-horizontal dd {
+                margin-left: 140px; /* Adjust the margin as needed */
             }
 
-        /* Optional: Style the Add Comment form */
-        .form-group {
-            margin-top: 20px;
+        .reviews-placeholder {
+            margin-left: 20px;
         }
 
+        .reviews h3 {
+            margin-top: 0;
+        }
+        h6{
+            font-weight:900;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+            display:inline;
+        }
     </style>
 }
 
-<h2>Details</h2>
+<h2>@Model.FileName for @Model.Subject.Name</h2>
 
-<div>
-    <h4>Upload</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Upload.FileName)
-        </dt>
+<input type="hidden" id="ratingInformations" recipe-votes="@Model.NumberOfRatingVotes"
+       recipe-ratings="@Model.TotalSumOfRatings" recipe-id="@Model.Id" />
+<div class="star-rating">
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span id="rating">0.0 (0)</span>
 
-        <dd>
-            @Html.ActionLink(Model.Upload.FileName, "DownloadFile", new { id = Model.Upload.Id })
-        </dd>
-    </dl>
+    <button class="btn btn-warning js-review">Add Review</button>
 </div>
 
-<div class="comments-wrapper">
-    <div class="comments">
-        @foreach (var comment in Model.Upload.Comments)
-        {
-            <p>
-                <strong>@comment.User.FirstName:</strong> @comment.CommentText
-            </p>
-        }
+<!-- Content Wrapper -->
+<div class="content-wrapper">
+    <!-- Display Upload Information -->
+    <div class="details-section">
+        <h4>Upload</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                <h6>
+                    @Html.DisplayNameFor(model => model.FileName)
+                </h6>
+            </dt>
+            <dd>
+                <h6>
+                    @Html.ActionLink(Model.FileName, "DownloadFile", new { id = Model.Id })
+                </h6>
+            </dd>
+            <dt>
+                <h6>
+                    @Html.DisplayNameFor(model => model.Description)
+                </h6>
+            </dt>
+            <dd>
+                <h6>
+                    @Html.DisplayFor(model => model.Description)
+                </h6>
+            </dd>
+            <dt>
+                <h6>
+                    Subject
+                </h6>
+            </dt>
+            <dd>
+                <h6>
+                    @Html.DisplayFor(model => model.Subject.Name)
+                </h6>
+            </dd>
+            <dt>
+                <h6>
+                    @Html.DisplayNameFor(model => model.User.UserName) 
+                </h6>
+            </dt>
+            <dd style="display:inline-block; width:50px">
+                <h6>
+                    @Html.DisplayFor(model => model.User.FirstName) @Html.DisplayFor(model=>model.User.LastName)
+                </h6>
+            </dd>
+        </dl>
+    </div>
+   
+    <div class="reviews" id="reviewsPlaceholder">
+        <div class="reviews-placeholder">
+            <h3>Reviews (@Model.Reviews.Count())</h3>
+            <hr />
+            @if (Model.Reviews.Count() > 0)
+            {
+                foreach (var review in Model.Reviews)
+                {
+                    <div class="userReview">
+                        @if (review.User.ProfilePicturePath != null)
+                        {
+                            <h5>
+                                <img src="@review.User.ProfilePicturePath" class="circular-image" />
+
+                                @review.User.FirstName @review.User.LastName
+
+                            </h5>
+                           
+                        }
+                        else
+                        {
+                    <h5>
+                        <img src="~/Pictures/profile.png" class="circular-image" />
+
+                        @review.User.FirstName @review.User.LastName
+
+                    </h5>
+                            
+                        }
+                        
+                        @for (var i = 1; i <= 5; i++)
+                        {
+                            <span class="userStar @(i <= review.Rating ? "filled" : "")">&#9733;</span>
+                        }
+                        @review.DateCreated.ToString("dd/MM/yyyy")
+                        <p>@review.CommentText</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <h2>No reviews for this file yet</h2>
+            }
+
+        </div>
     </div>
 </div>
 
-
+<!-- Navigation Links -->
 <p>
-
-    <h2>Add Comment</h2>
-
-    @using (Html.BeginForm("AddComment", "Uploads", FormMethod.Post, new { id = "commentForm" }))
-    {
-        @Html.HiddenFor(model => model.Comment.UploadId)
-        @Html.HiddenFor(model => model.Comment.UserId)
-
-        <div class="form-group">
-            @Html.TextAreaFor(model => model.Comment.CommentText, new { @class = "form-control" })
-        </div>
-
-    }
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Upload.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Details","Subjects", new { id = 1 }, new { @class = "btn btn-info" })
 </p>
+
 
 @section Scripts{
     <script>
         $(document).ready(function () {
-            $("#commentForm").on("keyup keypress", function (e) {
-                var keyCode = e.keyCode || e.which;
-                if (keyCode === 13) {
-                    e.preventDefault(); // Prevent the default action (form submission)
-                    // You can optionally perform additional actions or validation here if needed.
-                    $(this).submit(); // Trigger the form submission
+            var recipeInformation = $("#ratingInformations");
+            var recipeId = parseInt(recipeInformation.attr("recipe-id"));
+
+            function fillStars() {
+                var votes = parseInt(recipeInformation.attr("recipe-votes"));
+                var ratingSum = parseInt(recipeInformation.attr("recipe-ratings"));
+                if (votes > 0) {
+                    var average = ratingSum / votes;
+                    console.log(average)
+                    var stars = document.getElementsByClassName("star");
+                    Array.from(stars).forEach(function (star, index) {
+                        if (index < Math.floor(average)) {
+                            star.classList.add('filled');
+                        } else if (index === Math.floor(average)) {
+                            const decimalPart = average - Math.floor(average);
+                            if (decimalPart >= 0.25 && decimalPart <= 0.99) {
+                                star.classList.remove('filled');
+                                star.classList.add('filled-half');
+                            } else {
+                                star.classList.remove('filled-half');
+                            }
+                        } else {
+                            star.classList.remove('filled');
+                        }
+                    });
+                    $("#rating").html(average.toFixed(1) + " (" + votes + ")")
                 }
-            });
-        });
+            }
+
+            fillStars();
+
+
+            $(".js-review").on("click", function () {
+                var isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower();
+                console.log(isAuthenticated)
+
+                if (isAuthenticated === true) {
+
+                    var reviewForm = '<form id="reviewForm>"';
+                    reviewForm += '@Html.AntiForgeryToken()'
+
+                    reviewForm += '<label><input type="radio" name="rating" value="' + 1 + '" checked> 1 (Not Satisfactory) </label><br>';
+                    reviewForm += '<label><input type="radio" name="rating" value="' + 2 + '" checked> 2 (Satisfactory) </label><br>';
+                    reviewForm += '<label><input type="radio" name="rating" value="' + 3 + '" checked> 3 (Average) </label><br>';
+                    reviewForm += '<label><input type="radio" name="rating" value="' + 4 + '" checked> 4 (Good) </label><br>';
+                    reviewForm += '<label><input type="radio" name="rating" value="' + 5 + '" checked> 5 (Excellent) </label><br>';
+
+
+                    reviewForm += '<div class="form-group"><label for="comment-text">Comment</label><textarea id="comment-text" name="commentText" class="form-control" rows="3"></textarea></div>'
+                    reviewForm += '</form>'
+                    bootbox.confirm({
+                        title: 'How helpful was this file?',
+                        message: reviewForm,
+                        closeButton: false,
+                        buttons: {
+                            confirm: {
+                                label: 'Submit',
+                                className: 'btn-success'
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-secondary'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                var selectedRating = parseInt($("input[name='rating']:checked").val());
+                                var comment = $("#comment-text").val();
+                                var object = {
+                                    id: recipeId,
+                                    rating: selectedRating,
+                                    commentText: comment
+                                }
+
+                                var antiForgeryToken = $('#reviewForm input[name="__RequestVerificationToken"]').val();
+
+                                $.ajax({
+                                    url: "/Uploads/AddReview",
+                                    method: "POST",
+                                    data: object,
+                                    //data: JSON.stringify(object),
+                                    //contentType: 'application/json',
+                                    //headers: {
+                                    //    'RequestVerificationToken': antiForgeryToken // Set the anti-forgery token as a header
+                                    //},
+                                    success: function () {
+                                        var newVotesValue = parseInt(recipeInformation.attr("recipe-votes")) + 1;
+                                        var newRatingSumValue = parseInt(recipeInformation.attr("recipe-ratings")) + selectedRating;
+                                        recipeInformation.attr("recipe-votes", newVotesValue);
+                                        recipeInformation.attr("recipe-ratings", newRatingSumValue);
+                                        fillStars();
+
+                                        $.ajax({
+                                            url: "/Uploads/GetReviews", // Create an action to fetch reviews
+                                            method: "GET",
+                                            data: { id: recipeId }, // Pass the recipeId to fetch reviews for this recipe
+                                            success: function (data) {
+                                                // Replace the content of #reviewsPlaceholder with the updated reviews
+                                                $("#reviewsPlaceholder").html(data);
+                                            }
+                                        });
+                                    }
+                                })
+                                //console.log('Selected Rating:', selectedRating);
+                            }
+                        }
+                    })
+                } else {
+                    bootbox.confirm({
+                        message: "You need to be logged in to rate this file!",
+                        closeButton: false,
+                        buttons: {
+                            confirm: {
+                                label: 'Log in',
+                                className: 'btn-success',
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-secondary'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                var currentUrl = window.location.href;
+                                var das = currentUrl.split("/Uploads")
+                                var returnUrl = "/Uploads" + das[1];
+                                window.location.href = '/Account/Login?returnUrl=' + returnUrl;
+                            }
+                        }
+                    })
+                }
+            })
+        })
     </script>
 
 }

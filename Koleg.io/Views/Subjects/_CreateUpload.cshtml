@@ -3,29 +3,24 @@
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-            <h4 class="modal-title">Add New Upload</h4>
+            <h4 class="modal-title">Add New File</h4>
         </div>
         @using (Html.BeginForm("UploadFile", "Subjects", FormMethod.Post, new { id = "createUploadForm", enctype = "multipart/form-data" } ))
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model => model.SubjectId)
-
-            <div class="modal-body">
-
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea name="description" id="description" class="form-control"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="file">File:</label>
-                    <input type="file" name="file" id="file" class="form-control" />
-                </div>
-            </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="file">File:</label>
+                <input type="file" name="file" id="file" class="form-control" required />
+            </div>  
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea name="description" id="description" class="form-control"></textarea>
+        </div>
+        </div>
             <div class="modal-footer">
-                <input type="submit" value="Upload" class="btn btn-primary" />
-                @*<button type="button" class="btn btn-secondary" id="cancelButton" data-dismiss="modal">Cancel</button>
-                *@
+                <input type="submit" value="Upload" class="btn btn-info" />
             </div>
         }
     </div>

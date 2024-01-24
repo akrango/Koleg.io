@@ -17,11 +17,43 @@ namespace Koleg.io.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Subjects
-        public ActionResult Index()
+        public ActionResult Index(int id)
         {
+            ViewBag.Id = id;
             return View(db.Subjects.Include(s => s.Uploads).ToList());
         }
 
+        [HttpPost]
+        public ActionResult Search(string searchTerm)
+        {
+            // Perform a search in your database based on the searchTerm
+            var subjects = db.Subjects
+                .Where(s => s.Name.Contains(searchTerm) || s.Semester.Contains(searchTerm))
+                .ToList();
+
+            return PartialView("_SearchResults", subjects);
+        }
+
+        public ActionResult DownloadFile(int id)
+        {
+            // Retrieve the uploaded file from the database by its ID
+            Upload uploadedFile = db.Uploads.FirstOrDefault(f => f.Id == id);
+
+            if (uploadedFile != null)
+            {
+                // Prepare the file content for download
+                byte[] fileData = uploadedFile.FileData;
+                string fileName = uploadedFile.FileName;
+
+                // Return the file as a download response
+                return File(fileData, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            }
+            else
+            {
+                // Handle the case where the file with the given ID was not found
+                return HttpNotFound();
+            }
+        }
 
         public ActionResult UploadFile(int id)
         {
@@ -32,8 +64,8 @@ namespace Koleg.io.Controllers
             return PartialView("_CreateUpload",model);
         }
 
-        /*[HttpPost]
-        public ActionResult UploadFile(string description,HttpPostedFileBase file, SubjectUploadViewModel model)
+        [HttpPost]
+        public ActionResult UploadFile(string description, HttpPostedFileBase file, SubjectUploadViewModel model)
         {
             if (file == null || file.ContentLength == 0)
             {
@@ -69,73 +101,26 @@ namespace Koleg.io.Controllers
                     uploadedFile.Subject = subject;
                     db.SaveChanges();
                 }
-
-                return RedirectToAction("Details",new {id=subject.Id});
-            }
-
-            // If the model state is not valid, return the view with validation errors
-            return PartialView("_CreateUpload", model);
-        }*/
-
-        [HttpPost]
-        public ActionResult UploadFile(string description, HttpPostedFileBase file, SubjectUploadViewModel model)
-        {
-            if (file == null || file.ContentLength == 0)
-            {
-                // Handle the case where no file is selected for upload
-                ModelState.AddModelError("file", "Please select a file.");
-            }
-
-            if (string.IsNullOrEmpty(description))
-            {
-                // Handle the case where the description is empty
-                ModelState.AddModelError("description", "Please enter a description.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                // Get the currently logged-in user's ID (you may need to customize this based on your authentication setup)
-                string userId = User.Identity.GetUserId();
-                var subject = db.Subjects.Find(model.SubjectId);
-
-                using (BinaryReader binaryReader = new BinaryReader(file.InputStream))
+                /*return PartialView("_ShowSuccessUpload");*/
+                ViewBag.AddedFile = 1;
+/*                Subject subject = db.Subjects.Include(s => s.Uploads).FirstOrDefault(s => s.Id == id);
+*/                if (subject == null)
                 {
-                    int bufferSize = 4096; // You can adjust the buffer size as needed
-                    byte[] buffer = new byte[bufferSize];
-                    int bytesRead;
-
-                    while ((bytesRead = binaryReader.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        // Process the current chunk of data and save it to the database
-                        var uploadedFileChunk = new UploadChunk
-                        {
-                            FileId = subject.Id, // Link the chunk to the corresponding file
-                            ChunkData = buffer,  // Store the chunk data
-                        };
-
-                        db.UploadChunks.Add(uploadedFileChunk);
-                        db.SaveChanges(); // Save the chunk to the database
-                    }
+                    return HttpNotFound();
                 }
-
-                // Now that all chunks are saved, you can update the Upload entity with metadata and final processing.
-                var uploadedFile = new Upload
-                {
-                    FileName = file.FileName,
-                    UserId = userId,
-                    Description = description,
-                };
-
-                db.Uploads.Add(uploadedFile);
-                subject.Uploads.Add(uploadedFile);
-                uploadedFile.Subject = subject;
-                db.SaveChanges(); // Save the final file information to the database
-
-                return RedirectToAction("Details", new { id = subject.Id });
-            }
+                return View("Details", subject);
+                /*return View("Details", new { id = subject.Id });*/
+/*                return RedirectToAction("ShowReviewModal");
+*/            }
 
             // If the model state is not valid, return the view with validation errors
             return PartialView("_CreateUpload", model);
+        }
+
+        [HttpGet]
+        public ActionResult ShowReviewModal()
+        {
+            return PartialView("_ShowSuccessUpload");
         }
 
 
@@ -151,12 +136,56 @@ namespace Koleg.io.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.AddedFile = 0;
+
+            if (subject.Uploads.Any())
+            {
+                ViewBag.OverallScore = subject.Uploads
+                    .Where(upload => upload.IsApproved)
+                    .SelectMany(upload => upload.Reviews)
+                    .DefaultIfEmpty()
+                    .Average(review => review != null ? review.Rating : 0);
+            }
+            else
+            {
+                ViewBag.OverallScore = 0; // Set a default value if there are no reviews
+            }
+
+            // Calculate total number of files
+            ViewBag.TotalNumberOfFiles = subject.Uploads
+                .Where(upload => upload.IsApproved==true)
+                .Count();
+
+            // Find the most active user
+            ApplicationUser mostActiveUser = subject.Uploads
+             .Where(upload => upload.IsApproved)
+             .GroupBy(upload => upload.UserId)
+             .OrderByDescending(group => group.Count())
+             .Select(group => group.Key)
+             .Select(userId => subject.Uploads.FirstOrDefault(upload => upload.UserId == userId)?.User)
+             .FirstOrDefault();
+
+
+            ViewBag.MostActiveUser = mostActiveUser;
+
+            // Number of uploads by the most active user
+            if(mostActiveUser != null)
+            {
+                ViewBag.MostActiveUserUploadCount = subject.Uploads
+                .Count(u => u.UserId == mostActiveUser.Id);
+            }
+
             return View(subject);
         }
-
+        public List<string> Semesters = new List<string>()
+        {
+            "Зимски",
+            "Летен"
+        };
         // GET: Subjects/Create
         public ActionResult Create()
         {
+            ViewBag.Semesters = new SelectList(Semesters);
             return PartialView("_CreateSubject");
 
         }
@@ -166,15 +195,24 @@ namespace Koleg.io.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description")] Subject subject)
+        public ActionResult Create([Bind(Include = "Id,Name,Description,Year,Semester")] Subject subject)
         {
             if (ModelState.IsValid)
             {
                 db.Subjects.Add(subject);
                 db.SaveChanges();
+                return RedirectToAction("Index", new { id = 0 });
             }
+            else
+            {
+                ViewBag.Semesters = new SelectList(Semesters);
+                return PartialView("_CreateSubject", subject);
+            }
+        }
 
-            return RedirectToAction("Index");
+        public ActionResult ShowSuccessUpload()
+        {
+            return PartialView("_ShowSuccessUpload");
         }
 
         // GET: Subjects/Edit/5
@@ -189,7 +227,8 @@ namespace Koleg.io.Controllers
             {
                 return HttpNotFound();
             }
-            return View(subject);
+            ViewBag.Semesters = new SelectList(Semesters);
+            return PartialView("_EditSubject",subject);
         }
 
         // POST: Subjects/Edit/5
@@ -197,18 +236,18 @@ namespace Koleg.io.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description")] Subject subject)
+        public ActionResult Edit([Bind(Include = "Id,Name,Description,Year,Semester")] Subject subject)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(subject).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new {id=0});
             }
             return View(subject);
         }
 
-        // GET: Subjects/Delete/5
+        /*// GET: Subjects/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -232,7 +271,22 @@ namespace Koleg.io.Controllers
             db.Subjects.Remove(subject);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }*/
+
+        public ActionResult Delete(int? id)
+        {
+            Subject subject = db.Subjects.Include(s => s.Uploads).FirstOrDefault(s => s.Id == id);
+            db.Subjects.Remove(subject);
+            db.SaveChanges();
+            return RedirectToAction("Index", new {id=0});
         }
+
+        public ActionResult SetAddedFileToZero()
+        {
+            ViewBag.AddedFile = 0;
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
 
         protected override void Dispose(bool disposing)
         {

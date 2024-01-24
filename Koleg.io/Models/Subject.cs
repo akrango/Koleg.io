@@ -13,6 +13,11 @@ namespace Koleg.io.Models
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }
+        [Required]
+        public string Semester { get; set; }
+        [Required]
+        [Range(1, 4, ErrorMessage ="Subject year must be between 1 and 4")]
+        public int Year { get; set; }
         public virtual ICollection<Upload> Uploads { get; set; }
         public Subject()
         {

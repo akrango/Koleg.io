@@ -1,66 +1,48 @@
 ﻿@using Microsoft.AspNet.Identity
 @using Koleg.io.Extensions
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
 
+</head>
 @if (Request.IsAuthenticated)
 {
 
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
-        <ul class="navbar-nav navbar-right">
-            <li>
-                @Html.ActionLink("My Uploads", "UserFiles", "Uploads", new { area = "" }, new { @class = "nav-link" })
-            </li>
-            @if (User.IsInRole("User"))
-            {
-                <li>
-                    <div id="notification-bar" class="alert alert-info">
-                        <span id="notification-count">0</span>
-                    </div>
-                </li>
-            }
+<ul class="navbar-nav navbar-right">
+    <li>
+        @Html.ActionLink("My Uploads", "UserFiles", "Uploads", new { area = "" }, new { @class = "nav-link" })
+    </li>
+    <li>
+        @Html.ActionLink("My Profile", "Index", "User", new { area = "" }, new { @class = "nav-link" })
 
+    </li>
+
+
+    @*  @if (User.IsInRole("User"))
+        {
             <li>
-                @Html.ActionLink("Hello " + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+                <div id="notification-bar" class="alert alert-info">
+                    <span id="notification-count">0</span>
+                </div>
             </li>
-            <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-        </ul>
+        }*@
+
+    <li>
+@*        @Html.ActionLink("Hello " + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+*@    </li>
+    <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    <li><i class="bi bi-box-arrow-in-right" style="font-size: 2em " ;></i></li>
+</ul>
     }
 }
 else
 {
-    <ul class="navbar-nav navbar-right">
-        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link" })</li>
-        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
-    </ul>
+<ul class="navbar-nav navbar-right">
+    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link" })</li>
+    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+    <li><i class="bi bi-box-arrow-in-left" style="font-size: 2em" ;></i></li>
+</ul>
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-@if (User.Identity.IsAuthenticated)
-{
-    <script>
-        // Function to update the notification count
-        function updateNotificationCount() {
-            var notificationCount;
-
-            // Use Razor to inject the notification count from the model
-            $.ajax({
-                url: '/MyNotifications/GetNotificationCount', // Replace with your controller and action names
-                method: 'GET',
-                success: function (count) {
-                    // 'data' contains the integer value returned from the controller
-                    notificationCount = count;
-                },
-                error: function (error) {
-                    console.error('Error: ' + error.responseText);
-                }
-            });
-            $('#notification-count').text(notificationCount);
-        }
-        // Initially, update the notification count
-        updateNotificationCount();
-
-        // Periodically update the notification count, for example, every 30 seconds
-        //setInterval(updateNotificationCount, 3000);
-    </script>
-}
-

@@ -3,39 +3,240 @@
 @{
     ViewBag.Title = "Details";
 }
+<head>
+    <link href="~/Content/css/IndexStyle.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<style>
+    .my-card {
+        width: 800px; /* Allow the card to take the full width of its container */
+        height: fit-content;
+    }
 
-<h2>Uploads for @Model.Name</h2>
+    .card {
+        margin-bottom: 10px; /* Add margin between the cards */
+    }
 
-<button id="addUploadButton" data-toggle="modal" data-target="#createUploadModal" class="btn btn-primary">Add New Upload</button>
+    /* Add this style to make the files scrollable */
+    .file-container {
+        max-height: 500px; /* Adjust the maximum height as needed */
+        overflow-y: auto;
+        display: inline-block;
+        vertical-align: top;
+        width: 70%;
+        padding-top:20px;
+        margin:auto;
+    }
+
+    .card-body {
+        width: auto; /* Allow the card body to expand based on content */
+        display: inline-block;
+    }
+
+    /* Position the button to the right */
+    #addUploadButton {
+        margin-top: 10px;
+    }
+
+    .page-body {
+        display: flex;
+    }
+
+    /* Style for the details section */
+    .details {
+        margin: auto;
+        text-align: center;
+        margin-left: 20px;
+        padding-top: 20px;
+    }
+
+    h4 {
+        color: rgb(120, 194, 173);
+    }
+    /* Add style for the description text */
+    .description-text {
+        font-size: 1.2em;
+        line-height: 1.5;
+        color: black;
+        margin-bottom: 20px; /* Add some space below the description */
+    }
+</style>
+<h2>
+    Files for @Model.Name
+</h2>
+
+
 <div id="createUploadModal" tabindex="-1" class="modal fade" role="dialog">
 
 </div>
 
-<div>
-    @foreach (var upload in Model.Uploads)
-    {
-        <div class="card col-md-4 mb-4" id="fileCard_@upload.Id">
-            <div class="card-body">
-                <h5 class="card-title">
-                    @Html.DisplayFor(model => upload.User.FirstName)
-                    @Html.ActionLink(upload.FileName, "DownloadFile", new { id = upload.Id })
-                </h5>
-                <p class="card-text">@Html.DisplayFor(modelItem => upload.Description)</p>
-                <div class="text-center">
-                </div>
-            </div>
+<!-- Add this div for the "upload is being reviewed" modal -->
+<div id="uploadReviewModal" class="modal fade" role="dialog">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="reviewModalLabel">File Under Review</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-    }
+        <div class="modal-body">
+            <p>Your file has been successfully uploaded and is currently under review.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
 </div>
+<hr />
+<div class="page-body">
+    <div class="file-container">
+        @if (!Model.Uploads.Any(upload => upload.IsApproved))
+        {
+            <h2>Sorry, no Kolega uploaded a file :(</h2>
+            <h4>
+                @*        <span style="font-size:15em">😵</span>
+                *@        Maybe you can be a good Kolega and upload some files
+            </h4>
+        }
+        @foreach (var upload in Model.Uploads)
+        {
+            if (upload.IsApproved)
+            {
+                <div class="col-md-4 mb-2">
+                    <div class="card my-card mb-4" id="fileCard_@upload.Id">
+                        <div class="card-body">
+                            @*                        <h6>User: @Html.DisplayFor(model => upload.User.FirstName)</h6>
+                            *@                        <h5 class="card-title">
+                                @Html.ActionLink(upload.FileName, "DownloadFile", new { id = upload.Id })
+                            </h5>
+                            <input type="hidden" id="ratingInformations" recipe-votes="@upload.NumberOfRatingVotes"
+                                   recipe-ratings="@upload.TotalSumOfRatings" recipe-id="@upload.Id" />
+                            <div class="star-rating">
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span class="star">&#9733;</span>
+                                <span id="rating">0.0 (0)</span>
+                            </div>
+                            <div class="text-center">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <hr />
+    <div class="details card">
+        <h4>Subject Overall Score:</h4>
+        <h5>
+            <i class="bi bi-star-fill" style="color:gold"></i>
+            @*@Math.Round((double)ViewBag.OverallScore, 1)*@
+        </h5>
+        <h4>Total Number of Files:</h4>
+        <h5><i class="bi bi-arrow-90deg-up" style="color:red"></i>@ViewBag.TotalNumberOfFiles</h5>
+        @if (@ViewBag.MostActiveUser != null)
+        {
+            <h4>Most Active User: </h4>
+            @ViewBag.MostActiveUser.UserName
+
+        }
+        <h4>Number of Uploads by Most Active User: </h4>
+        <h5><i class="bi bi-arrow-90deg-up" style="color:red"></i>@ViewBag.MostActiveUserUploadCount</h5>
+        <button id="addUploadButton" data-toggle="modal" data-target="#createUploadModal" class="btn btn-info" style="font-size:1.2em">
+            <i class="bi bi-box-arrow-up" style="font-size:1.2em"></i>
+            Upload File
+        </button>
+
+    </div>
+</div>
+
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-    @Html.ActionLink("Upload File", "UploadFile", new { id = Model.Id })
+    @Html.ActionLink("Back to List", "Index", new { id = 0 }, new { @class = "btn btn-info btn-sm" })
+
 </p>
+<div class="card details" style="margin:0">
+    <h2 style="color: #007bff">Description about @Model.Name</h2>
+    <p class="description-text">
+        @Model.Description
+    </p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 @section Scripts{
     <script>
-        $(document).ready(function () {
+   function modalShow() {
+    var addedfile = '@ViewBag.AddedFile';
+
+    if (addedfile == 1) {
+        bootbox.alert({
+            title: "File Under Review",
+            message: "Your file has been successfully uploaded and is currently under review.",
+            closeButton: false,
+            backdrop: true,
+            buttons: {
+                ok: {
+                    label: 'OK',
+                    className: 'btn-success'
+                }
+            },
+            callback: function () {
+                // Make an AJAX call to set ViewBag.AddedFile to 0
+                $.ajax({
+                    url: '/Subjects/SetAddedFileToZero',
+                    type: 'GET',
+                    success: function (data) {
+                        // Optionally, you can add code to execute after updating ViewBag.AddedFile
+                    },
+                    error: function () {
+                        console.error('Error occurred while updating ViewBag.AddedFile.');
+                    }
+                });
+            }
+        });
+    }
+}
+
+
+            $(document).ready(function () {
+
+                var recipeInformation = $("#ratingInformations");
+                var recipeId = parseInt(recipeInformation.attr("recipe-id"));
+
+                function fillStars() {
+                    var votes = parseInt(recipeInformation.attr("recipe-votes"));
+                    var ratingSum = parseInt(recipeInformation.attr("recipe-ratings"));
+                    if (votes > 0) {
+                        var average = ratingSum / votes;
+                        console.log(average)
+                        var stars = document.getElementsByClassName("star");
+                        Array.from(stars).forEach(function (star, index) {
+                            if (index < Math.floor(average)) {
+                                star.classList.add('filled');
+                            } else if (index === Math.floor(average)) {
+                                const decimalPart = average - Math.floor(average);
+                                if (decimalPart >= 0.25 && decimalPart <= 0.99) {
+                                    star.classList.remove('filled');
+                                    star.classList.add('filled-half');
+                                } else {
+                                    star.classList.remove('filled-half');
+                                }
+                            } else {
+                                star.classList.remove('filled');
+                            }
+                        });
+                        $("#rating").html(average.toFixed(1) + " (" + votes + ")")
+                    }
+                }
+
+
+                fillStars();
+
+
             // Attach a click event handler to the card element
             $(".card").click(function () {
                 // Get the id from the id attribute
@@ -44,7 +245,6 @@
                 // Redirect to the desired view using JavaScript
                 window.location.href = "/Uploads/Details/" + id; // Replace ControllerName and ActionName
             });
-
 
             // Show the modal when the "Add New Upload" button is clicked
             $("#addUploadButton").on("click", function () {
@@ -61,22 +261,35 @@
                 });
             });
 
+
             // Hide the modal when the form is submitted
             $("#createUploadForm").on("submit", function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
                 // Serialize the form data
                 var formData = new FormData($('#createUploadForm')[0]);
                 $.ajax({
                     url: "/Subjects/UploadFile/" + @Model.Id,
                     type: "POST",
                     data: formData,
-                    processData: false, // Prevent jQuery from automatically processing the data
-                    contentType: false, // Prevent jQuery from setting the content type
+                    processData: false,
+                    contentType: false,
                     success: function () {
                         $("#createUploadModal").modal("hide");
-                        // You may want to refresh or update the subject list on success.
+
+                        // Show the "uploadReviewModal" upon successful form submission
+
+                    },
+                    error: function () {
+                        alert('Error occurred while uploading the file.');
                     }
                 });
+
             });
-    });
+                modalShow();
+
+        });
+
     </script>
 }
+

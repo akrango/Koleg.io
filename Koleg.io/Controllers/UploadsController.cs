@@ -21,6 +21,13 @@ namespace Koleg.io.Controllers
         {
             return View(db.Uploads.ToList());
         }
+
+        [HttpGet]
+        public ActionResult GetReviews(int id)
+        {
+            var reviews = db.Reviews.Where(r => r.UploadId == id).ToList();
+            return PartialView("ReviewsPartial", reviews);
+        }
         public ActionResult AddComment(int id)
         {
             Comment comment = new Comment();
@@ -30,25 +37,69 @@ namespace Koleg.io.Controllers
             return View(comment);
         }
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public ActionResult AddComment(Comment comment)
         {
             if (ModelState.IsValid)
             {
-                //comment.User = db.Users.Find(comment.UserId);
-                var upload =db.Uploads.Find(comment.UploadId);
-                // Create a new comment and associate it with the uploaded file
-                upload.Comments.Add(comment);
-                upload.IsCommentedOn = true;
-                var user= db.Users.Find(comment.UserId);
-                user.MyUploads.Add(upload);
-                db.SaveChanges();
+                // Explicitly load the upload entity without tracking
+                var upload = db.Uploads.AsNoTracking().FirstOrDefault(u => u.Id == comment.UploadId);
 
-                return RedirectToAction("Details", new {id=upload.Id}); // Redirect to the appropriate view
+                if (upload != null)
+                {
+                    // Associate the comment with the upload
+                    comment.UploadId = upload.Id;
+                    comment.User = db.Users.Find(comment.UserId);
+
+                    // Add the comment to the upload's Comments collection
+                    upload.Comments.Add(comment);
+                    upload.IsCommentedOn = true;
+
+                    // Attach the entities to the context (to avoid duplicate key tracking issues)
+                    db.Entry(upload).State = EntityState.Unchanged;
+                    db.Entry(comment.User).State = EntityState.Unchanged;
+
+                    // Save changes
+                    db.Comments.Add(comment);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Details", new { id = upload.Id });
+                }
             }
 
             return View(comment);
         }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult AddReview(ReviewPostModel reviewPostModel)
+        {
+            var userId = User.Identity.GetUserId();
+            var upload = db.Uploads.Find(reviewPostModel.id);
+
+            if (upload != null)
+            {
+                var review = new Review
+                {
+                    Rating = reviewPostModel.rating,
+                    CommentText = reviewPostModel.commentText,
+                    UserId = userId,
+                    User = db.Users.Find(userId),
+                    UploadId = reviewPostModel.id,
+                    DateCreated = DateTime.Now
+                };
+
+                upload.Reviews.Add(review);
+                upload.NumberOfRatingVotes++;
+                upload.TotalSumOfRatings += reviewPostModel.rating;
+
+                db.Reviews.Add(review);
+                db.SaveChanges();
+            }
+
+            return View("Details", upload);
+        }
+
         public ActionResult UserFiles()
         {
             // Get the currently logged-in user's ID
@@ -110,7 +161,7 @@ namespace Koleg.io.Controllers
         }
 
 
-       /* public ActionResult DownloadFile(int id)
+        public ActionResult DownloadFile(int id)
         {
             // Retrieve the uploaded file from the database by its ID
             Upload uploadedFile = db.Uploads.FirstOrDefault(f => f.Id == id);
@@ -129,7 +180,7 @@ namespace Koleg.io.Controllers
                 // Handle the case where the file with the given ID was not found
                 return HttpNotFound();
             }
-        }*/
+        }
 
 
 
@@ -154,7 +205,7 @@ namespace Koleg.io.Controllers
             comment.UserId = userId;
             viewModel.Comment = comment;
             
-            return View(viewModel);
+            return View(upload);
         }
 
         // GET: Uploads/Create
@@ -192,7 +243,7 @@ namespace Koleg.io.Controllers
             {
                 return HttpNotFound();
             }
-            return View(upload);
+            return View("_EditUpload",upload);
         }
 
         // POST: Uploads/Edit/5
@@ -219,7 +270,7 @@ namespace Koleg.io.Controllers
             }
             return View(upload);
         }
-
+/*
         // GET: Uploads/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -237,7 +288,6 @@ namespace Koleg.io.Controllers
 
         // POST: Uploads/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             Upload upload = db.Uploads.Find(id);
@@ -245,7 +295,53 @@ namespace Koleg.io.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+*/
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Upload upload = db.Uploads.Find(id);
+            if (upload == null)
+            {
+                return HttpNotFound();
+            }
+            db.Uploads.Remove(upload);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
+        // GET: Uploads/Approve/5
+        public ActionResult Approve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Upload upload = db.Uploads.Find(id);
+
+            if (upload == null)
+            {
+                return HttpNotFound();
+            }
+
+            upload.IsApproved = true;
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+   /*     // POST: Uploads/Approve/5
+        [HttpPost, ActionName("Approve")]
+        public ActionResult ApproveConfirmed(int id)
+        {
+            Upload upload = db.Uploads.Find(id);
+            upload.IsApproved = true;
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+*/
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -38,6 +38,8 @@ namespace Koleg.io.Models
 
         public System.Data.Entity.DbSet<Koleg.io.Models.Comment> Comments { get; set; }
 
-        public System.Data.Entity.DbSet<Koleg.io.Models.UploadChunk> UploadChunks { get; set; }
-    }
+        public System.Data.Entity.DbSet<Koleg.io.Models.Review> Reviews { get; set; }
+
+/*        public System.Data.Entity.DbSet<Koleg.io.Models.ApplicationUser> ApplicationUsers { get; set; }
+*/    }
 }
