@@ -5,6 +5,7 @@
 }
 <head>
     <link href="~/Content/css/IndexStyle.css" rel="stylesheet" />
+    <link href="~/Content/css/mystyle.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <style>
@@ -110,7 +111,7 @@
                             *@                        <h5 class="card-title">
                                 @Html.ActionLink(upload.FileName, "DownloadFile", new { id = upload.Id })
                             </h5>
-                            <input type="hidden" id="ratingInformations" recipe-votes="@upload.NumberOfRatingVotes"
+                            <input type="hidden" class="ratingInformations" recipe-votes="@upload.NumberOfRatingVotes"
                                    recipe-ratings="@upload.TotalSumOfRatings" recipe-id="@upload.Id" />
                             <div class="star-rating">
                                 <span class="star">&#9733;</span>
@@ -118,7 +119,7 @@
                                 <span class="star">&#9733;</span>
                                 <span class="star">&#9733;</span>
                                 <span class="star">&#9733;</span>
-                                <span id="rating">0.0 (0)</span>
+                                <span class="rating">0.0 (0)</span>
                             </div>
                             <div class="text-center">
                             </div>
@@ -200,41 +201,45 @@
         });
     }
 }
+   
 
+        function fillStars(recipeInformation) {
+            var votes = parseInt(recipeInformation.attr("recipe-votes"));
+            var ratingSum = parseInt(recipeInformation.attr("recipe-ratings"));
 
-            $(document).ready(function () {
+            if (votes > 0) {
+                var average = ratingSum / votes;
+                var starsContainer = recipeInformation.siblings(".star-rating");
+                var stars = starsContainer.find(".star");
 
-                var recipeInformation = $("#ratingInformations");
-                var recipeId = parseInt(recipeInformation.attr("recipe-id"));
-
-                function fillStars() {
-                    var votes = parseInt(recipeInformation.attr("recipe-votes"));
-                    var ratingSum = parseInt(recipeInformation.attr("recipe-ratings"));
-                    if (votes > 0) {
-                        var average = ratingSum / votes;
-                        console.log(average)
-                        var stars = document.getElementsByClassName("star");
-                        Array.from(stars).forEach(function (star, index) {
-                            if (index < Math.floor(average)) {
-                                star.classList.add('filled');
-                            } else if (index === Math.floor(average)) {
-                                const decimalPart = average - Math.floor(average);
-                                if (decimalPart >= 0.25 && decimalPart <= 0.99) {
-                                    star.classList.remove('filled');
-                                    star.classList.add('filled-half');
-                                } else {
-                                    star.classList.remove('filled-half');
-                                }
-                            } else {
-                                star.classList.remove('filled');
-                            }
-                        });
-                        $("#rating").html(average.toFixed(1) + " (" + votes + ")")
+                stars.each(function (index) {
+                    if (index < Math.floor(average)) {
+                        $(this).addClass('filled');
+                    } else if (index === Math.floor(average)) {
+                        const decimalPart = average - Math.floor(average);
+                        if (decimalPart >= 0.25 && decimalPart <= 0.99) {
+                            $(this).removeClass('filled').addClass('filled-half');
+                        } else {
+                            $(this).removeClass('filled-half');
+                        }
+                    } else {
+                        $(this).removeClass('filled');
                     }
-                }
+                });
+
+                starsContainer.find(".rating").html(average.toFixed(1) + " (" + votes + ")");
+            }
+        }
 
 
-                fillStars();
+        // Fill stars for each upload
+
+        $(".ratingInformations").each(function () {
+            var recipeInformation = $(this);
+            fillStars(recipeInformation);
+        });
+
+        $(document).ready(function () {
 
 
             // Attach a click event handler to the card element

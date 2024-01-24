@@ -171,7 +171,6 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\MyNotificationsController.cs" />
     <Compile Include="Controllers\SubjectsController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UploadsController.cs" />
@@ -271,10 +270,13 @@
     <Compile Include="Migrations\202401131543089_UploadUserPicture.designer.cs">
       <DependentUpon>202401131543089_UploadUserPicture.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202401241055316_DeleteComments.cs" />
+    <Compile Include="Migrations\202401241055316_DeleteComments.designer.cs">
+      <DependentUpon>202401241055316_DeleteComments.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
-    <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Review.cs" />
@@ -282,7 +284,6 @@
     <Compile Include="Models\Subject.cs" />
     <Compile Include="Models\SubjectUploadViewModel.cs" />
     <Compile Include="Models\Upload.cs" />
-    <Compile Include="Models\UploadDetailsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -554,7 +555,6 @@
     <Content Include="Views\Uploads\UploadFile.cshtml" />
     <Content Include="Views\Uploads\UserFiles.cshtml" />
     <Content Include="Views\Subjects\UploadFile.cshtml" />
-    <Content Include="Views\Uploads\AddComment.cshtml" />
     <Content Include="Views\Account\AddUserToRole.cshtml" />
     <Content Include="Views\Subjects\_CreateSubject.cshtml" />
     <Content Include="Views\Subjects\_CreateUpload.cshtml" />
@@ -578,7 +578,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Images\" />
-    <Folder Include="Views\MyNotifications\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -674,6 +673,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202401131543089_UploadUserPicture.resx">
       <DependentUpon>202401131543089_UploadUserPicture.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202401241055316_DeleteComments.resx">
+      <DependentUpon>202401241055316_DeleteComments.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

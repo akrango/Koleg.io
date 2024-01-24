@@ -33,12 +33,14 @@ namespace Koleg.io.Controllers
         [HttpPost]
         public ActionResult UploadProfilePicture(HttpPostedFileBase file)
         {
+            ApplicationUser u = db.Users.Find(User.Identity.GetUserId());
+            Console.WriteLine(u.FirstName);
+
             if (file != null && file.ContentLength > 0)
             {
                 try
                 {
-                    ApplicationUser u = db.Users.Find(User.Identity.GetUserId());
-                    Console.WriteLine(u.FirstName);
+                    
                     // Generate a unique file name
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
@@ -69,7 +71,7 @@ namespace Koleg.io.Controllers
                     return View("Error");
                 }
             }
-
+            ViewBag.ActiveUser = u;
             // If the file is not provided, return to the upload form with an error
             ModelState.AddModelError("File", "Please choose a file to upload.");
             return View("Index");

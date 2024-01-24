@@ -20,7 +20,6 @@ namespace Koleg.io.Models
         public virtual ApplicationUser User { get; set; }
         public virtual Subject Subject { get; set; }
         public int SubjectId { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
         public virtual List<Review> Reviews { get; set; }
 
         public bool IsCommentedOn { get; set; }
@@ -28,7 +27,6 @@ namespace Koleg.io.Models
         public int NumberOfRatingVotes { get; set; }
         public int TotalSumOfRatings { get; set; }
         public Upload() {
-            Comments=new List<Comment>();
             IsCommentedOn = false;
             IsApproved = false;
             Reviews = new List<Review>();

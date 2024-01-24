@@ -28,47 +28,6 @@ namespace Koleg.io.Controllers
             var reviews = db.Reviews.Where(r => r.UploadId == id).ToList();
             return PartialView("ReviewsPartial", reviews);
         }
-        public ActionResult AddComment(int id)
-        {
-            Comment comment = new Comment();
-            comment.UserId=User.Identity.GetUserId();
-            comment.UploadId = id;
-            comment.User = db.Users.Find(comment.UserId);
-            return View(comment);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult AddComment(Comment comment)
-        {
-            if (ModelState.IsValid)
-            {
-                // Explicitly load the upload entity without tracking
-                var upload = db.Uploads.AsNoTracking().FirstOrDefault(u => u.Id == comment.UploadId);
-
-                if (upload != null)
-                {
-                    // Associate the comment with the upload
-                    comment.UploadId = upload.Id;
-                    comment.User = db.Users.Find(comment.UserId);
-
-                    // Add the comment to the upload's Comments collection
-                    upload.Comments.Add(comment);
-                    upload.IsCommentedOn = true;
-
-                    // Attach the entities to the context (to avoid duplicate key tracking issues)
-                    db.Entry(upload).State = EntityState.Unchanged;
-                    db.Entry(comment.User).State = EntityState.Unchanged;
-
-                    // Save changes
-                    db.Comments.Add(comment);
-                    db.SaveChanges();
-
-                    return RedirectToAction("Details", new { id = upload.Id });
-                }
-            }
-
-            return View(comment);
-        }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -196,15 +155,6 @@ namespace Koleg.io.Controllers
             {
                 return HttpNotFound();
             }
-            UploadDetailsViewModel viewModel = new UploadDetailsViewModel();
-            viewModel.Upload = upload;
-            Comment comment=new Comment();
-            var userId= User.Identity.GetUserId();
-            comment.User = db.Users.FirstOrDefault(u => u.Id == userId);
-            comment.UploadId = upload.Id;
-            comment.UserId = userId;
-            viewModel.Comment = comment;
-            
             return View(upload);
         }
 
