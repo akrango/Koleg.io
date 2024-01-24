@@ -49,12 +49,15 @@
             color: #666; /* Lighter text color */
         }
 </style>
+<div id="addedPicture" tabindex="-1" class="modal fade" role="dialog">
+
+</div>
 
 <div class="container">
     <div class="row">
         <div class="col-md-6">
             <div class="profile-info">
-                <h1 class="text-primary">Welcome, @ViewBag.ActiveUser.FirstName @ViewBag.ActiveUser.LastName!</h1>
+                <h1 class="text-primary">Hello, @ViewBag.ActiveUser.FirstName @ViewBag.ActiveUser.LastName!</h1>
 
                 @if (ViewBag.ActiveUser.ProfilePicturePath != null)
                 {
@@ -67,18 +70,8 @@
                     <div class="circular-image-container">
                         <img src="~/Pictures/profile.png" class="circular-image" />
                     </div>
-                    <div class="flex-column">
-                        @using (Html.BeginForm("UploadProfilePicture", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                        {
-                            <div class="form-group">
-                                <label for="file">Choose profile picture</label>
-                                <input type="file" name="file" id="file" class="form-control" style="margin-left:180px"/>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-info form-control">Upload</button>
-                            </div>
-                        }
-                    </div>
+                    <button id="addPicture" data-toggle="modal" data-target="#addedPicture" class="btn btn-info">Upload Picture</button>
+
                 }
             </div>
         </div>
@@ -102,3 +95,50 @@
         </div>
     </div>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#addPicture").on("click", function () {
+                console.log("add");
+                $.ajax({
+                    url: '/User/UploadProfilePicture',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#addedPicture').html(data);
+                        $('#addedPicture').modal('show');
+                    },
+                    error: function () {
+                        alert('Error occurred while fetching data.');
+                    }
+                });
+            });
+
+            $("#addPictureForm").on("submit", function (e) {
+                e.preventDefault(); // Prevent the default form submission
+                $.ajax({
+                    url: "/User/UploadProfilePicture",
+                    method: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: formData  ,
+                    success: function (data) {
+                        // If the response is a partial view (indicating validation errors),
+                        // update the modal content and show the modal again
+                        if ($(data).find(".modal-content").length) {
+                            $('#addedPicture').html(data);
+                            $('#addedPicture').modal('show');
+                        } else {
+                            // If the response is not a partial view, the form submission was successful.
+                            // You may want to handle this case accordingly.
+                            // For example, you could close the modal or redirect to another page.
+                            $('#addPicture').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while uploading the subject.');
+                    }
+                });
+            });
+        });
+    </script>
+}

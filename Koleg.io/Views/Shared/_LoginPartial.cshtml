@@ -11,17 +11,27 @@
     {
         @Html.AntiForgeryToken()
 <ul class="navbar-nav navbar-right">
-    <li>
-        @Html.ActionLink("My Uploads", "UserFiles", "Uploads", new { area = "" }, new { @class = "nav-link" })
-    </li>
-    <li>
-        @Html.ActionLink("My Profile", "Index", "User", new { area = "" }, new { @class = "nav-link" })
+    @if (User.IsInRole("Administrator"))
+    {
+        <li>@Html.ActionLink("Uploads", "Index", "Uploads", new { area = "" }, new { @class = "nav-link" })</li>
+    }
 
-    </li>
+    else
+    {
+        <li>
+            @Html.ActionLink("My Uploads", "UserFiles", "Uploads", new { area = "" }, new { @class = "nav-link" })
+        </li>
+        <li>
+            @Html.ActionLink("My Profile", "Index", "User", new { area = "" }, new { @class = "nav-link" })
+
+        </li>
+    }
+
 
     <li>
-@*        @Html.ActionLink("Hello " + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
-*@    </li>
+        @*        @Html.ActionLink("Hello " + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+        *@
+    </li>
     <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     <li><i class="bi bi-box-arrow-in-right" style="font-size: 2em " ;></i></li>
 </ul>

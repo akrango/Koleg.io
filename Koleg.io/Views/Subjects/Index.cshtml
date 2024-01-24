@@ -56,15 +56,21 @@
 @if (Model.Where(i => i.Year == ViewBag.Id).Count() > 0 || ViewBag.Id == 0)
 {
     <div class="row filtered">
-        <div class="col-md-12">
+        <div class="col-md-4">
             <div class="form-group">
                 <h6>
                     <label for="searchInput">Search Subjects</label>
                     <i class="bi bi-search" style="font-size:1.2em"></i>
                 </h6>
                 <input type="text" id="searchInput" class="form-control" />
-
-                <label for="semesterDropdown">Select Semester:</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <h6>
+                    <label for="semesterDropdown">Select Semester:</label>
+                    <i class="bi bi-search" style="font-size:1.2em"></i>
+                </h6>
                 <select id="semesterDropdown" class="form-control">
                     <option value="">All Semesters</option>
                     <option value="Winter">Winter</option>
@@ -98,9 +104,9 @@ else
                         </h3>
                         <h6 class="card-text text-center">@Html.DisplayFor(modelItem => item.Semester)</h6>
                         <div class="text-center">
-                            <button data-edit-id="@item.Id" class="btn btn-info edit">Edit</button>
                             @if (User.IsInRole("Administrator"))
                             {
+                                <button data-edit-id="@item.Id" class="btn btn-info edit">Edit</button>
                                 <button data-table-id="@item.Id" class="btn btn-danger js-delete">Delete</button>
                             }
                         </div>
@@ -118,7 +124,7 @@ else
 @section Scripts {
 
     <script>
-       
+
         $(document).ready(function () {
 
             $("#semesterDropdown").on("change", function () {
@@ -131,7 +137,7 @@ else
                 performSearch();
             });
 
-            
+
 
             // Delete action
             $(".js-delete").on("click", function () {
@@ -161,7 +167,7 @@ else
                             });
                         }
                     },
-                    closeButton: false  
+                    closeButton: false
                 });
 
             });
@@ -270,6 +276,7 @@ else
                     $(".allSubjects").html(data);
                     $(".allSubjects").on("click", ".card", function (event) {
                         if (!$(event.target).hasClass("js-delete") && !$(event.target).hasClass("edit")) {
+
                             var id = $(this).attr("id").split("_")[1];
                             window.location.href = "/Subjects/Details/" + id;
                         }

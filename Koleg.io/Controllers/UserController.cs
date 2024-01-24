@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace Koleg.io.Controllers
 {
+    [Authorize(Roles = "User")]
     public class UserController : Controller
     {
         private UserManager<ApplicationUser> _userManager; // Assuming you have a custom ApplicationUser class
@@ -27,6 +28,13 @@ namespace Koleg.io.Controllers
             ApplicationUser u = db.Users.Find(User.Identity.GetUserId());
             ViewBag.ActiveUser = u;
             return View();
+        }
+
+        [HttpGet]
+        public ActionResult UploadProfilePicture()
+        {
+            return PartialView("_AddPicture");
+
         }
 
         // POST: /Upload/UploadProfilePicture
@@ -63,7 +71,8 @@ namespace Koleg.io.Controllers
                     db.SaveChanges();
 
                     // Redirect to the user's profile page or another relevant page
-                    return RedirectToAction("Index");
+/*                    return PartialView("_AddPicture", file);
+*/                    return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {

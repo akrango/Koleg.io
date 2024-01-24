@@ -17,6 +17,7 @@ namespace Koleg.io.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Uploads
+        [Authorize(Roles = "Administrator")]
         public ActionResult Index()
         {
             return View(db.Uploads.ToList());
@@ -29,6 +30,7 @@ namespace Koleg.io.Controllers
             return PartialView("ReviewsPartial", reviews);
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public ActionResult AddReview(ReviewPostModel reviewPostModel)
@@ -59,6 +61,7 @@ namespace Koleg.io.Controllers
             return View("Details", upload);
         }
 
+        [Authorize(Roles = "User")]
         public ActionResult UserFiles()
         {
             // Get the currently logged-in user's ID
@@ -70,6 +73,7 @@ namespace Koleg.io.Controllers
             return View(userUploadedFiles);
         }
 
+        [Authorize(Roles = "User")]
         public ActionResult UploadFile()
         {
             return View();
@@ -158,6 +162,7 @@ namespace Koleg.io.Controllers
             return View(upload);
         }
 
+        [Authorize(Roles = "User")]
         // GET: Uploads/Create
         public ActionResult Create()
         {
@@ -182,6 +187,7 @@ namespace Koleg.io.Controllers
         }
 
         // GET: Uploads/Edit/5
+        [Authorize(Roles = "User")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -220,32 +226,33 @@ namespace Koleg.io.Controllers
             }
             return View(upload);
         }
-/*
-        // GET: Uploads/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Upload upload = db.Uploads.Find(id);
-            if (upload == null)
-            {
-                return HttpNotFound();
-            }
-            return View(upload);
-        }
+        /*
+                // GET: Uploads/Delete/5
+                public ActionResult Delete(int? id)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Upload upload = db.Uploads.Find(id);
+                    if (upload == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(upload);
+                }
 
-        // POST: Uploads/Delete/5
-        [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Upload upload = db.Uploads.Find(id);
-            db.Uploads.Remove(upload);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-*/
+                // POST: Uploads/Delete/5
+                [HttpPost, ActionName("Delete")]
+                public ActionResult DeleteConfirmed(int id)
+                {
+                    Upload upload = db.Uploads.Find(id);
+                    db.Uploads.Remove(upload);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+        */
+        [Authorize(Roles = "Administrator,User")]
         public ActionResult Delete(int? id)
         {
             if (id == null)

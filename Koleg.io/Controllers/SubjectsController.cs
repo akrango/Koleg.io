@@ -68,7 +68,7 @@ namespace Koleg.io.Controllers
                 return HttpNotFound();
             }
         }
-
+        [Authorize(Roles = "User")]
         public ActionResult UploadFile(int id)
         {
             SubjectUploadViewModel model=new SubjectUploadViewModel();
@@ -118,7 +118,7 @@ namespace Koleg.io.Controllers
                 /*return PartialView("_ShowSuccessUpload");*/
                 ViewBag.AddedFile = 1;
 /*                Subject subject = db.Subjects.Include(s => s.Uploads).FirstOrDefault(s => s.Id == id);
-*/                if (subject == null)
+*/              if (subject == null)
                 {
                     return HttpNotFound();
                 }
@@ -196,6 +196,7 @@ namespace Koleg.io.Controllers
             "Summer"
         };
         // GET: Subjects/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             ViewBag.Semesters = new SelectList(Semesters);
@@ -229,6 +230,7 @@ namespace Koleg.io.Controllers
         }
 
         // GET: Subjects/Edit/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -285,7 +287,7 @@ namespace Koleg.io.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }*/
-
+        [Authorize(Roles = "Administrator")]
         public ActionResult Delete(int? id)
         {
             Subject subject = db.Subjects.Include(s => s.Uploads).FirstOrDefault(s => s.Id == id);

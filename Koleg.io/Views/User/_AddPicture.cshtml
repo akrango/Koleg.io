@@ -1,0 +1,25 @@
+﻿<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Add Your Picture</h4>
+        </div>
+
+        @using (Html.BeginForm("UploadProfilePicture", "User", FormMethod.Post, new { id = "addPictureForm", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="file">Choose profile picture</label>
+                    <input type="file" name="file" id="file" class="form-control" />
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-info form-control">Upload</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

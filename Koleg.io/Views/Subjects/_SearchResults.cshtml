@@ -15,9 +15,9 @@
                     </h3>   
                     <h5 class="card-text text-center">@Html.DisplayFor(modelItem => subject.Semester)</h5>
                     <div class="text-center">
-                        <button data-edit-id="@subject.Id" class="btn btn-info edit">Edit</button>
                         @if (User.IsInRole("Administrator"))
                         {
+                            <button data-edit-id="@subject.Id" class="btn btn-info edit">Edit</button>
                             <button data-table-id="@subject.Id" class="btn btn-danger js-delete">Delete</button>
                         }
                     </div>
