@@ -558,11 +558,6 @@
     <Content Include="Views\Account\AddUserToRole.cshtml" />
     <Content Include="Views\Subjects\_CreateSubject.cshtml" />
     <Content Include="Views\Subjects\_CreateUpload.cshtml" />
-    <Content Include="Views\UploadChunks\Create.cshtml" />
-    <Content Include="Views\UploadChunks\Delete.cshtml" />
-    <Content Include="Views\UploadChunks\Details.cshtml" />
-    <Content Include="Views\UploadChunks\Edit.cshtml" />
-    <Content Include="Views\UploadChunks\Index.cshtml" />
     <Content Include="Views\Subjects\_ShowSuccessUpload.cshtml" />
     <Content Include="Views\Subjects\_EditSubject.cshtml" />
     <Content Include="Views\Uploads\_EditUpload.cshtml" />
