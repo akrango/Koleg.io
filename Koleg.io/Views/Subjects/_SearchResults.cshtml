@@ -6,23 +6,27 @@
 
     @foreach (var subject in Model)
     {
-        <div class="col-md-2 mb-2">
-            <div class="card my-card" id="fileCard_@subject.Id">
-                <div class="card-body">
-                    <h3 class="card-title text-center">
-                        <i class="bi bi-backpack" style="font-size: 1.5em;"></i>
-                        @Html.DisplayFor(modelItem => subject.Name)
-                    </h3>
-                    <div class="text-center">
-                        <h6 style="color: #6cc3d5" class="card-text text-center"><i class="bi bi-caret-right"></i>@Html.DisplayFor(modelItem => subject.Semester)</h6>
-                        @if (User.IsInRole("Administrator"))
-                        {
-                            <button data-edit-id="@subject.Id" class="btn btn-info edit">Edit</button>
-                            <button data-table-id="@subject.Id" class="btn btn-danger js-delete">Delete</button>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
+       <div class="col-md-2 mb-2">
+           <div class="card my-card" id="fileCard_@subject.Id">
+               <div class="card-body">
+                   <h3 style="align-self:center" class="card-title text-center">
+                       <i class="bi bi-backpack" style="font-size: 1.5em;"></i>
+                       @Html.DisplayFor(modelItem => subject.Name)
+                   </h3>
+                   <div class="text-center">
+                       <h5 style="color: #007bff" class="card-text text-center">
+                           <i class="bi bi-caret-right"></i>@Html.DisplayFor(modelItem => subject.Semester)
+                       </h5>
+                       @if (User.IsInRole("Administrator"))
+                       {
+                           <div class="mt-2">
+                               <button data-edit-id="@subject.Id" class="btn btn-info edit">Edit</button>
+                               <button data-table-id="@subject.Id" class="btn btn-danger js-delete">Delete</button>
+                           </div>
+                       }
+                   </div>
+               </div>
+           </div>
+       </div>
     }
 

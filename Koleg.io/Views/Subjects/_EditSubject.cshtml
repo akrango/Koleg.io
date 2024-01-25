@@ -46,7 +46,7 @@
             </b>
             <div class="col-md-10">
                 <div class="input-group">
-                    @Html.DropDownList("Semester", ViewBag.Semesters as SelectList, "Select Semester", new { @class = "custom-select" })
+                    @Html.DropDownList("Semester", ViewBag.Semesters as SelectList, "Select Semester", new { @class = "custom-select form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.Semester, "", new { @class = "text-danger" })
             </div>

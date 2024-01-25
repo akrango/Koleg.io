@@ -58,7 +58,7 @@
     <br />
     @if (Model.Where(i => i.Year == ViewBag.Id).Count() > 0 || ViewBag.Id == 0)
     {
-        <div class="row filtered">
+        <div class="row filtered justify-content-center">
             <div class="col-md-3">
                 <div class="form-group">
                     <h6>
@@ -87,8 +87,8 @@
     else
     {
         <div class="text-center">
-            <h4 style="color: #aec6cf ">Sorry, no Subjects for @title1 year</h4>
             <img src="~/Pictures/empty_folder.png" alt="Empty Folder" width="150" height="150">
+            <h4 style="color: #aec6cf ">Sorry, no Subjects for @title1 year</h4>
         </div>
     }
 
@@ -96,7 +96,7 @@
             <!-- Add an empty div to hold the search results -->
             <div class="" id="searchResultsContainer"></div>
 
-            <div class="row allSubjects">
+            <div class="row allSubjects text-center justify-content-center">
                 @foreach (var item in Model)
                 {
                     if (item.Year == ViewBag.Id || ViewBag.Id == 0)
@@ -104,16 +104,20 @@
                         <div class="col-md-2 mb-2">
                             <div class="card my-card" id="fileCard_@item.Id">
                                 <div class="card-body">
-                                    <h3 class="card-title text-center">
+                                    <h3 style="align-self:center" class="card-title text-center">
                                         <i class="bi bi-backpack" style="font-size: 1.5em;"></i>
                                         @Html.DisplayFor(modelItem => item.Name)
                                     </h3>
                                     <div class="text-center">
-                                        <h6 style="color: #6cc3d5" class="card-text text-center"><i class="bi bi-caret-right"></i>@Html.DisplayFor(modelItem => item.Semester)</h6>
+                                        <h5 style="color: #007bff" class="card-text text-center">
+                                            <i class="bi bi-caret-right"></i>@Html.DisplayFor(modelItem => item.Semester)
+                                        </h5>
                                         @if (User.IsInRole("Administrator"))
                                         {
-                                            <button data-edit-id="@item.Id" class="btn btn-info edit">Edit</button>
-                                            <button data-table-id="@item.Id" class="btn btn-danger js-delete">Delete</button>
+                                            <div class="mt-2">
+                                                <button data-edit-id="@item.Id" class="btn btn-info edit">Edit</button>
+                                                <button data-table-id="@item.Id" class="btn btn-danger js-delete">Delete</button>
+                                            </div>
                                         }
                                     </div>
                                 </div>
@@ -168,7 +172,7 @@
                                 url: "/Subjects/Delete/" + button.attr("data-table-id"),
                                 method: "GET",
                                 success: function () {
-                                    button.closest('.card').remove();
+                                    button.closest('.col-md-2').remove();
                                 }
                             });
                         }
@@ -266,6 +270,54 @@
                     },
                     error: function () {
                         alert('Error occurred while updating the subject.');
+                    }
+                });
+            });
+
+            $(".allSubjects").on("click", ".js-delete", function () {
+                var button = $(this);
+                console.log(button.attr("data-table-id"));
+
+                bootbox.confirm({
+                    message: "Are you sure you want to delete this subject?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/Subjects/Delete/" + button.attr("data-table-id"),
+                                method: "GET",
+                                success: function () {
+                                    button.closest('.col-md-2').remove();
+                                }
+                            });
+                        }
+                    },
+                    closeButton: false
+                });
+            });
+
+            $(".allSubjects").on("click", ".edit", function () {
+                var button = $(this);
+                console.log(button);
+                $.ajax({
+                    url: '/Subjects/Edit/' + button.attr("data-edit-id"),
+                    type: 'GET',
+                    success: function (data) {
+                        $('#editSubjectModal').html(data);
+                        $('#editSubjectModal').modal('show');
+                    },
+                    error: function () {
+                        console.log(id);
+                        alert('Error occurred while fetching data.');
                     }
                 });
             });
