@@ -24,9 +24,15 @@ namespace Koleg.io.Controllers
         }
 
         [HttpPost]
-        public ActionResult Search(string searchTerm, string semester)
+        public ActionResult Search(string searchTerm, string semester, int year)
         {
             var query = db.Subjects.AsQueryable();
+
+            if (year > 0)
+            {
+                query = query.Where(s => s.Year == year);
+
+            }
 
             if (!string.IsNullOrEmpty(searchTerm) && !string.IsNullOrEmpty(semester))
             {

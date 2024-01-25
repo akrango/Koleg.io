@@ -420,6 +420,7 @@
     <Content Include="LoginPartial.css" />
     <Content Include="Pictures\empty_folder.png" />
     <Content Include="Pictures\profile.png" />
+    <Content Include="Pictures\profilepicture.png" />
     <Content Include="Scripts\bootbox.js" />
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />

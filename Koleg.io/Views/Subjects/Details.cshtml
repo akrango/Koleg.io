@@ -94,11 +94,13 @@
     <div class="file-container">
         @if (!Model.Uploads.Any(upload => upload.IsApproved))
         {
-            <h2>Sorry, no Kolega uploaded a file :(</h2>
-            <h4>
-                @*        <span style="font-size:15em">😵</span>
-                *@        Maybe you can upload some files ->
-            </h4>
+            <div class="text-center">
+                <h2>Sorry, no Kolega uploaded a file :(</h2>
+                <h4>
+                    Maybe you can upload some files ->
+                </h4>
+                <img src="~/Pictures/empty_folder.png" alt="Empty Folder" width="150" height="150">
+            </div>
         }
         @foreach (var upload in Model.Uploads)
         {
@@ -144,7 +146,7 @@
             <h5>
                 @ViewBag.MostActiveUser.FirstName @ViewBag.MostActiveUser.LastName
                 <br />
-                <i class="bi bi-arrow-90deg-up" style="color:red"></i><i>@ViewBag.MostActiveUser.UserName</i>
+                <i class="bi bi-arrow-return-right" style="color:red"></i><i>@ViewBag.MostActiveUser.UserName</i>
             </h5>
 
         }

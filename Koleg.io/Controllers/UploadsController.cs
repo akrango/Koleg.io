@@ -222,36 +222,11 @@ namespace Koleg.io.Controllers
                 // Update the file name in the database
                 originalFile.FileName = upload.FileName;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("UserFiles");
             }
             return View(upload);
         }
-        /*
-                // GET: Uploads/Delete/5
-                public ActionResult Delete(int? id)
-                {
-                    if (id == null)
-                    {
-                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                    }
-                    Upload upload = db.Uploads.Find(id);
-                    if (upload == null)
-                    {
-                        return HttpNotFound();
-                    }
-                    return View(upload);
-                }
-
-                // POST: Uploads/Delete/5
-                [HttpPost, ActionName("Delete")]
-                public ActionResult DeleteConfirmed(int id)
-                {
-                    Upload upload = db.Uploads.Find(id);
-                    db.Uploads.Remove(upload);
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-        */
+      
         [Authorize(Roles = "Administrator,User")]
         public ActionResult Delete(int? id)
         {
