@@ -1,6 +1,7 @@
 ﻿@{
-    ViewBag.Title = "Confirm Email";
+    ViewBag.Title = "Info";
 }
+
 <main>
     <div class="container">
         <div class="row">
@@ -8,14 +9,12 @@
                 <div>
                     <h2 id="title">@ViewBag.Title.</h2>
                     <p>
-                        <h3>
-                            Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
-                        </h3>
+                        <h3>@ViewBag.Message</h3>
                     </p>
                 </div>
             </div>
             <div class="col-md-4">
-                <img src="~/Content/Images/confirmation.png" class="img-fluid" alt="Confirmation Image" width="70%" />
+                <img src="~/Content/Images/confirmation.png" class="img-fluid" alt="Confirmation Image" width="50%" />
             </div>
         </div>
     </div>

@@ -158,16 +158,16 @@ namespace Koleg.io.Controllers
             ViewBag.AddedFile = 0;
 
             if (subject.Uploads.Any())
-            {
+            { 
                 ViewBag.OverallScore = subject.Uploads
-                    .Where(upload => upload.IsApproved)
-                    .SelectMany(upload => upload.Reviews)
-                    .DefaultIfEmpty()
-                    .Average(review => review != null ? review.Rating : 0);
+                   .Where(upload => upload.IsApproved==true)
+                   .SelectMany(upload => upload.Reviews)
+                   .DefaultIfEmpty()
+                   .Average(review => review != null ? review.Rating : 0);
             }
             else
             {
-                ViewBag.OverallScore = 0; // Set a default value if there are no reviews
+                ViewBag.OverallScore = 0; 
             }
 
             // Calculate total number of files
@@ -194,8 +194,65 @@ namespace Koleg.io.Controllers
                 .Count(u => u.UserId == mostActiveUser.Id);
             }
 
+            if (Request.IsAjaxRequest())
+            {
+                // If it's an AJAX request, return a partial view
+                return PartialView("_DetailsPartial", subject);
+            }
+
             return View(subject);
         }
+
+        public ActionResult DetailsPartial(int id)
+        {
+            Subject subject = db.Subjects.Include(s => s.Uploads).FirstOrDefault(s => s.Id == id);
+
+            if (subject == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.AddedFile = 0;
+
+            if (subject.Uploads.Any())
+            {
+                ViewBag.OverallScore = subject.Uploads
+                   .Where(upload => upload.IsApproved == true)
+                   .SelectMany(upload => upload.Reviews)
+                   .DefaultIfEmpty()
+                   .Average(review => review != null ? review.Rating : 0);
+            }
+            else
+            {
+                ViewBag.OverallScore = 0;
+            }
+
+            // Calculate total number of files
+            ViewBag.TotalNumberOfFiles = subject.Uploads
+                .Where(upload => upload.IsApproved == true)
+                .Count();
+
+            // Find the most active user
+            ApplicationUser mostActiveUser = subject.Uploads
+             .Where(upload => upload.IsApproved)
+             .GroupBy(upload => upload.UserId)
+             .OrderByDescending(group => group.Count())
+             .Select(group => group.Key)
+             .Select(userId => subject.Uploads.FirstOrDefault(upload => upload.UserId == userId)?.User)
+             .FirstOrDefault();
+
+
+            ViewBag.MostActiveUser = mostActiveUser;
+
+            // Number of uploads by the most active user
+            if (mostActiveUser != null)
+            {
+                ViewBag.MostActiveUserUploadCount = subject.Uploads
+                .Count(u => u.UserId == mostActiveUser.Id);
+            }
+
+            return PartialView("_DetailsPartial", subject);
+        }
+
         public List<string> Semesters = new List<string>()
         {
             "Winter",
@@ -305,6 +362,7 @@ namespace Koleg.io.Controllers
         public ActionResult SetAddedFileToZero()
         {
             ViewBag.AddedFile = 0;
+
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 

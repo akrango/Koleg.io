@@ -25,6 +25,7 @@ namespace Koleg.io.Controllers
             ViewBag.Name = db.Users.FirstOrDefault().FirstName;
             return View();
         }
+        [Authorize]
 
         public ActionResult Contact()
         {

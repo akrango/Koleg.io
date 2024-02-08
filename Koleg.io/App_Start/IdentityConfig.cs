@@ -11,18 +11,46 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Koleg.io.Models;
+using SendGrid;
+using System.Net;
+using System.Configuration;
+using System.Diagnostics;
+using SendGrid.Helpers.Mail;
 
 namespace Koleg.io
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            await configSendGridasync(message);
+        }
+
+        // Use NuGet to install SendGrid (Basic C# client lib) 
+        private async Task configSendGridasync(IdentityMessage message)
+        {
+
+            var apikey = "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";
+            var client = new SendGridClient(apikey);
+            var from = new EmailAddress("koleg.io.project@gmail.com", "Koleg.io");
+            var subject=message.Subject;
+            var to = new EmailAddress(message.Destination);
+            var plainTextContent = message.Body;
+            var htmlCotent = message.Body;
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlCotent);
+
+            if(client!=null)
+            {
+                await client.SendEmailAsync(msg);
+            }
+            else
+            {
+                Trace.TraceError($"Failed to send email");
+                await Task.FromResult(0);
+            }
+
         }
     }
-
     public class SmsService : IIdentityMessageService
     {
         public Task SendAsync(IdentityMessage message)

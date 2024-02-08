@@ -25,8 +25,8 @@
         display: inline-block;
         vertical-align: top;
         width: 70%;
-        padding-top:20px;
-        margin:auto;
+        padding-top: 20px;
+        margin: auto;
     }
 
     .card-body {
@@ -51,6 +51,7 @@
         padding-top: 20px;
         width: 450px;
     }
+
     .details-desc {
         margin: auto;
         text-align: center;
@@ -139,11 +140,15 @@
         }
     </div>
     <hr />
-    <div class="details card">
+    <div class="details card" id="detailsContainer">
         <h4>Subject Overall Score:</h4>
         <h5>
             <i class="bi bi-star-fill" style="color:gold"></i>
-            @Math.Round((double)ViewBag.OverallScore, 1)
+            @if (ViewBag.OverallScore != null)
+            {
+                @Math.Round((double)ViewBag.OverallScore, 1)
+            }
+
         </h5>
         <h4>Total Number of Files:</h4>
         <h5><i class="bi bi-arrow-90deg-up" style="color:red"></i>@ViewBag.TotalNumberOfFiles</h5>
@@ -160,10 +165,14 @@
 
 
         }
-        <button id="addUploadButton" data-toggle="modal" data-target="#createUploadModal" class="btn btn-info" style="font-size:1.2em">
-            <i class="bi bi-box-arrow-up" style="font-size:1.2em"></i>
-            Upload File
-        </button>
+        @if (User.IsInRole("User"))
+        {
+            <button id="addUploadButton" data-toggle="modal" data-target="#createUploadModal" class="btn btn-info" style="font-size:1.2em">
+                <i class="bi bi-box-arrow-up" style="font-size:1.2em"></i>
+                Upload File
+            </button>
+        }
+
 
     </div>
 </div>
@@ -205,7 +214,17 @@
                     url: '/Subjects/SetAddedFileToZero',
                     type: 'GET',
                     success: function (data) {
-                        // Optionally, you can add code to execute after updating ViewBag.AddedFile
+                        $.ajax({
+                        url: '/Subjects/DetailsPartial/' + @Model.Id,
+                        type: 'GET',
+                        success: function (data) {
+                            // Update relevant elements with new details content
+                            $('#detailsContainer').html(data);
+                        },
+                        error: function () {
+                            console.error('Error occurred while fetching updated details.');
+                        }
+                        });
                     },
                     error: function () {
                         console.error('Error occurred while updating ViewBag.AddedFile.');
@@ -215,7 +234,7 @@
         });
     }
 }
-   
+
 
         function fillStars(recipeInformation) {
             var votes = parseInt(recipeInformation.attr("recipe-votes"));
@@ -254,8 +273,22 @@
         });
 
         $(document).ready(function () {
+             // Show the modal when the "Add New Upload" button is clicked
+            $("#addUploadButton").on("click", function (e) {
+                e.stopPropagation();
 
-
+                 $.ajax({
+                     url: '/Subjects/UploadFile/' + @Model.Id,
+                     type: 'GET',
+                     success: function (data) {
+                         $('#createUploadModal').html(data);
+                         $('#createUploadModal').modal('show');
+                     },
+                     error: function () {
+                         alert('Error occurred while fetching data.');
+                     }
+                 });
+             });
             // Attach a click event handler to the card element
             $(".card").click(function () {
                 // Get the id from the id attribute
@@ -265,20 +298,7 @@
                 window.location.href = "/Uploads/Details/" + id; // Replace ControllerName and ActionName
             });
 
-            // Show the modal when the "Add New Upload" button is clicked
-            $("#addUploadButton").on("click", function () {
-                $.ajax({
-                    url: '/Subjects/UploadFile/' + @Model.Id,
-                    type: 'GET',
-                    success: function (data) {
-                        $('#createUploadModal').html(data);
-                        $('#createUploadModal').modal('show');
-                    },
-                    error: function () {
-                        alert('Error occurred while fetching data.');
-                    }
-                });
-            });
+
 
 
             // Hide the modal when the form is submitted

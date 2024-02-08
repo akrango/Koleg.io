@@ -2,20 +2,23 @@
 @{
     ViewBag.Title = "AddUserToRole";
 }
+<main class="d-flex justify-content-center align-items-center">
+    <div style="width: max-content;">
+        <h2>Add User To Role</h2>
+        @using (Html.BeginForm("AddUserToRole", "Account"))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.SelectedEmail, "User's Email")
+                @Html.DropDownListFor(m => m.SelectedEmail, new SelectList(Model.Emails), "", new { @class = "form-control" })
+            </div>
 
-<h2>Add User To Role</h2>
-@using (Html.BeginForm("AddUserToRole", "Account"))
-{
-    <div class="form-group">
-        @Html.LabelFor(m => m.SelectedEmail, "User's Email")
-        @Html.DropDownListFor(m => m.SelectedEmail, new SelectList(Model.Emails), "", new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.SelectedRole, "User's Role")
+                @Html.DropDownListFor(m => m.SelectedRole, new SelectList(Model.Roles), "", new { @class = "form-control" })
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block">Add</button>
+        }
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.SelectedRole, "User's Role")
-        @Html.DropDownListFor(m => m.SelectedRole, new SelectList(Model.Roles), "", new { @class = "form-control" })
-    </div>
-
-    <button type="submit" class="btn btn-success">Add</button>
-}
+</main>
 

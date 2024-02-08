@@ -14,6 +14,7 @@
     @if (User.IsInRole("Administrator"))
     {
         <li>@Html.ActionLink("Uploads", "Index", "Uploads", new { area = "" }, new { @class = "nav-link" })</li>
+        <li>@Html.ActionLink("Roles", "AddUserToRole", "Account", new { area = "" }, new { @class = "nav-link" })</li>
     }
 
     else
