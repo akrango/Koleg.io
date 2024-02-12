@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -15,9 +16,23 @@ namespace Koleg.io.Controllers
 
         public ActionResult Index()
         {
-            
-            return View();
+            // Fetch subjects from the database
+            List<Subject> subjectsFromDb = db.Subjects.Include(s=>s.Uploads).ToList();
+
+
+            // Calculate the overall score for each subject on the client side
+            var bestScoredSubjects = subjectsFromDb
+                .OrderByDescending(s => s.Uploads
+                    .Where(upload => upload.IsApproved)
+                    .SelectMany(upload => upload.Reviews)
+                    .DefaultIfEmpty()
+                    .Average(review => review != null ? review.Rating : 0))
+                .Take(3)
+                .ToList();
+
+            return View(bestScoredSubjects);
         }
+
 
         public ActionResult About()
         {

@@ -281,6 +281,14 @@
     <Compile Include="Migrations\202401241055316_DeleteComments.designer.cs">
       <DependentUpon>202401241055316_DeleteComments.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202402082002460_UpdateSubject.cs" />
+    <Compile Include="Migrations\202402082002460_UpdateSubject.designer.cs">
+      <DependentUpon>202402082002460_UpdateSubject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202402082011419_UpdateSubj.cs" />
+    <Compile Include="Migrations\202402082011419_UpdateSubj.designer.cs">
+      <DependentUpon>202402082011419_UpdateSubj.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
@@ -311,6 +319,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\css\home.css" />
     <Content Include="Content\css\IndexStyle.css" />
     <Content Include="Content\css\mystyle.css" />
     <Content Include="Content\DataTables\css\autoFill.bootstrap.css" />
@@ -684,6 +693,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202401241055316_DeleteComments.resx">
       <DependentUpon>202401241055316_DeleteComments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402082002460_UpdateSubject.resx">
+      <DependentUpon>202402082002460_UpdateSubject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402082011419_UpdateSubj.resx">
+      <DependentUpon>202402082011419_UpdateSubj.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

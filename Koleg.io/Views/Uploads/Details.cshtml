@@ -16,14 +16,14 @@
             flex-wrap: wrap;
         }
 
-            dl.dl-horizontal dt {
-                width: 100px; /* Adjust the width as needed */
-                font-weight: bold;
-            }
+        dl.dl-horizontal dt {
+            width: 100px; /* Adjust the width as needed */
+            font-weight: bold;
+        }
 
-            dl.dl-horizontal dd {
-                margin-left: 140px; /* Adjust the margin as needed */
-            }
+        dl.dl-horizontal dd {
+            margin-left: 140px; /* Adjust the margin as needed */
+        }
 
         .reviews-placeholder {
             margin-left: 20px;
@@ -42,7 +42,7 @@
         }
         .circular-image {
             overflow: hidden;
-            border-radius: 50%;
+            border-radius: 40%;
         }
     </style>
 }
@@ -162,7 +162,7 @@
 
 <!-- Navigation Links -->
 <p>
-    @Html.ActionLink("Back to List", "Details","Subjects", new { id = 1 }, new { @class = "btn btn-info" })
+    @Html.ActionLink("Back to List", "Details", "Subjects", new { id = Model.SubjectId }, new { @class = "btn btn-info" })
 </p>
 
 

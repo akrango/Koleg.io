@@ -50,24 +50,24 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     transition: box-shadow 0.3s ease-in-out;
-    height: 210px; /* Adjust the height as needed */
-    width: 210px; /* Adjust the width as needed */
+    height: 250px; 
+    width: 210px;
 }
 
-    .my-card:hover {
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    }
+.my-card:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
 
-    .my-card h4 {
-        margin-bottom: 10px;
-        text-transform: capitalize;
-        font-size: 1em; /* Adjust the font size as needed */
-    }
+.my-card h4 {
+    margin-bottom: 10px;
+    text-transform: capitalize;
+    font-size: 1em; 
+}
 
-    .my-card .text-center {
-        margin-top: 5px;
-    }
+.my-card .text-center {
+    margin-top: 5px;
+}
 
-    .my-card .btn {
-        margin-right: 5px;
-    }
+.my-card .btn {
+    margin-right: 5px;
+}

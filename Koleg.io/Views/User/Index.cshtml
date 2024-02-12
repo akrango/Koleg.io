@@ -4,17 +4,17 @@
 <style>
     .circular-image-container {
         width: 300px; /* Adjust the size as needed */
-        height: 300px; /* Adjust the size as needed */
+        /*height: 300px;*/ /* Adjust the size as needed */
         overflow: hidden;
-        border-radius: 20%;
+        border-radius: 10%;
         margin: 30px auto; /* Center the container */
         transition: transform 0.3s ease-in-out; /* Add a smooth transition effect */
     }
 
 
-        .circular-image-container:hover {
-            transform: scale(1.2); /* Increase the size by 20% on hover */
-        }
+    .circular-image-container:hover {
+        transform: scale(1.2); /* Increase the size by 20% on hover */
+    }
 
 
     .circular-image {
@@ -24,7 +24,7 @@
 
     .profile-info {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 80px;
         font-size: 1.2em;
     }
 
@@ -38,16 +38,16 @@
         text-align: center; /* Align user info text to the left */
     }
 
-        .user-info-container dt {
-            font-weight: bold;
-            color: #333; /* Dark text color */
-            margin: 5px 0;
-        }
+    .user-info-container dt {
+        font-weight: bold;
+        color: #333; /* Dark text color */
+        margin: 5px 0;
+    }
 
-        .user-info-container dd {
-            margin: 5px 0;
-            color: #666; /* Lighter text color */
-        }
+    .user-info-container dd {
+        margin: 5px 0;
+        color: #666; /* Lighter text color */
+    }
 </style>
 <div id="addedPicture" tabindex="-1" class="modal fade" role="dialog">
 
@@ -64,6 +64,8 @@
                     <div class="circular-image-container">
                         <img src="@ViewBag.ActiveUser.ProfilePicturePath" class="circular-image" />
                     </div>
+                 
+                    <button id="addPicture" data-toggle="modal" data-target="#addedPicture" class="btn btn-info">Change Picture</button>
                 }
                 else
                 {

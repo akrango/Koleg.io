@@ -39,6 +39,7 @@
         <table class="table table-hover" id="uploadsTable">
             <thead class="text-center">
                 <tr>
+                    <th></th>
                     <th><h4>File Name</h4></th>
                     <th><h4>Actions</h4></th>
                 </tr>
@@ -46,7 +47,9 @@
             <tbody>
                 @foreach (var file in Model)
                 {
+                   
                     <tr>
+                        <td><i class="bi bi-file-earmark-text" style="font-size:1.5em"></i></td>
                         <td>
                                 <h5>
                                     @file.FileName
@@ -62,11 +65,11 @@
                                 }
                                 @if (!file.IsApproved)
                                 {
-                                    <button class="btn btn-light btn-common-size">Not Approved </button>
+                                    <button class="btn btn-light btn-common-size btn-sm">Not Approved</button>
                                 }
 
-                                <button data-edit-id="@file.Id" class="btn btn-info btn-common-size edit">Edit</button>
-                                <button data-table-id="@file.Id" class="btn btn-danger btn-common-size js-delete">Delete</button>
+                                <button data-edit-id="@file.Id" class="btn btn-info btn-common-size btn-sm edit">Edit</button>
+                                <button data-table-id="@file.Id" class="btn btn-danger btn-common-size btn-sm js-delete">Delete</button>
 
                             </div>
                         </td>
@@ -77,11 +80,11 @@
     }
     else
     {
-<div class="text-center">
-    <img src="~/Pictures/empty_folder.png" alt="Empty Folder" width="150" height="150">
-    <h2>Oops! It looks like your upload folder is as empty as a black hole in space.</h2>
-    <p>Start sharing your files!</p>
-</div>
+        <div class="text-center">
+            <img src="~/Pictures/empty_folder.png" alt="Empty Folder" width="150" height="150">
+            <h2>Oops! It looks like your upload folder is as empty as a black hole in space.</h2>
+            <p>Start sharing your files!</p>
+        </div>
     }
 </div>
 
@@ -122,10 +125,9 @@
                 });
             });
 
-            $(".edit").on("click", function () {
+            $("#uploadsTable").on("click", ".edit", function () {
                 var button = $(this);
-                console.log(button);
-                $.ajax({
+                 $.ajax({
                     url: '/Uploads/Edit/' + button.attr("data-edit-id"),
                     type: 'GET',
                     success: function (data) {
@@ -140,6 +142,8 @@
 
             // Hide the edit modal when the form is submitted
             $("#editSubjectForm").on("submit", function (e) {
+
+                console.log($(this).serialize())
                 e.preventDefault();
                 $.ajax({
                     url: "/Uploads/Edit", // Adjust the URL as needed

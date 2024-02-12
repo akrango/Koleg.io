@@ -207,7 +207,7 @@ namespace Koleg.io.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FileName,FileData")] Upload upload)
+        public ActionResult Edit([Bind(Include = "Id,FileName,Description")] Upload upload)
         {
             if (ModelState.IsValid)
             {
@@ -221,6 +221,9 @@ namespace Koleg.io.Controllers
 
                 // Update the file name in the database
                 originalFile.FileName = upload.FileName;
+                originalFile.Description = upload.Description;
+                /*                db.Entry(upload).State = EntityState.Modified;
+                */
                 db.SaveChanges();
                 return RedirectToAction("UserFiles");
             }

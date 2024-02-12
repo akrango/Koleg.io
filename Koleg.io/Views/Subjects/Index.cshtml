@@ -104,20 +104,24 @@
                         <div class="col-md-2 mb-2">
                             <div class="card my-card" id="fileCard_@item.Id">
                                 <div class="card-body">
+                                    <i class="bi bi-laptop" style="font-size: 2.5em;"></i>
                                     <h3 style="align-self:center" class="card-title text-center">
-                                        <i class="bi bi-backpack" style="font-size: 1.5em;"></i>
                                         @Html.DisplayFor(modelItem => item.Name)
                                     </h3>
                                     <div class="text-center">
-                                        <h5 style="color: #007bff" class="card-text text-center">
-                                            <i class="bi bi-caret-right"></i>@Html.DisplayFor(modelItem => item.Semester)
-                                        </h5>
+
                                         @if (User.IsInRole("Administrator"))
                                         {
                                             <div class="mt-2">
                                                 <button data-edit-id="@item.Id" class="btn btn-info edit">Edit</button>
                                                 <button data-table-id="@item.Id" class="btn btn-danger js-delete">Delete</button>
                                             </div>
+                                        }
+                                        else
+                                        {
+                                            <h5 style="color: #007bff" class="card-text text-center">
+                                                <i class="bi bi-caret-right"></i>@Html.DisplayFor(modelItem => item.Semester)
+                                            </h5>
                                         }
                                     </div>
                                 </div>
@@ -149,7 +153,7 @@
 
 
 
-            // Delete action
+            /*// Delete action
             $(".js-delete").on("click", function () {
                 var button = $(this);
                 console.log(button.attr("data-table-id"));
@@ -180,7 +184,7 @@
                     closeButton: false
                 });
 
-            });
+            });*/
 
             // Card click action
             $(".card").on("click", function (event) {
